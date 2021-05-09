@@ -31,7 +31,7 @@ class QueryJoinMetadata(GraphSerializable):
     for this information.
     """
     NODE_LABEL = 'Join'
-    KEY_FORMAT = '{left_column_key}-{operator}-{right_column_key}'
+    KEY_FORMAT = '{join_type}-{left_column_key}-{operator}-{right_column_key}'
 
     # Relation between entity and query
     COLUMN_JOIN_RELATION_TYPE = 'COLUMN_JOINS_WITH'
@@ -82,7 +82,7 @@ class QueryJoinMetadata(GraphSerializable):
 
         self.join_type = join_type
         self.join_operator = join_operator
-        self.join_sql = self._format_join_sql(join_sql[0])
+        self.join_sql = self._format_join_sql(join_sql)
         self.query_metadata = query_metadata
         self.yield_relation_nodes = yield_relation_nodes
         self._node_iter = self._create_next_node()
@@ -120,14 +120,17 @@ class QueryJoinMetadata(GraphSerializable):
             return None
 
     @staticmethod
-    def get_key(left_column_key, right_column_key, operator) -> str:
+    def get_key(left_column_key, right_column_key, join_type, operator) -> str:
+        join_no_space = join_type.replace(' ', '-')
         return QueryJoinMetadata.KEY_FORMAT.format(left_column_key=left_column_key,
                                                    right_column_key=right_column_key,
+                                                   join_type=join_no_space,
                                                    operator=operator)
 
     def get_key_self(self) -> str:
         return QueryJoinMetadata.get_key(left_column_key=self.left_table._get_col_key(col=self.left_column),
                                          right_column_key=self.right_table._get_col_key(col=self.right_column),
+                                         join_type=self.join_type,
                                          operator=self.join_operator)
 
     def get_query_relations(self) -> List[GraphRelationship]:

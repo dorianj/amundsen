@@ -52,12 +52,9 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         SELECT
             query_id,
             database_name,
-            lower({cluster_source}) as cluster,
             schema_name,
             query_text,
-            user_name,
-            start_time,
-            end_time
+            user_name
         FROM table(information_schema.query_history()) as query_history
         WHERE execution_status = 'SUCCESS'
               and query_history.START_TIME >= '{start_timestamp}'
@@ -80,9 +77,6 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     # Config Keys #
     ###############
 
-    CLUSTER_KEY = 'cluster_key'
-    USE_CATALOG_AS_CLUSTER_NAME = 'use_catalog_as_cluster_name'
-
     # Database Key, used to identify the database type in the UI.
     DATABASE_KEY = 'database_key'
     # Snowflake Database Key, used to determine which Snowflake database to connect to.
@@ -100,10 +94,13 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     # Host for the SQL Parser REST API
     SQL_PARSER_HOST = 'sql_parser_host'
 
+    _defualt_dt = dt.datetime(2021, 5, 1, 0, 0, 0)
     DEFAULT_CONFIG = ConfigFactory.from_dict({
-        CLUSTER_KEY: 'master',
-        USE_CATALOG_AS_CLUSTER_NAME: True,
         DATABASE_KEY: 'snowflake',
+        SNOWFLAKE_DATABASE_KEY: 'prod',
+        DEFAULT_SCHEMA_KEY: 'PUBLIC',
+        START_TIMESTAMP: _defualt_dt.strftime('%Y-%m-%d %H:%M:%S'),
+        END_TIMESTAMP: (_defualt_dt - dt.timedelta(days=1)).date().strftime('%Y-%m-%d'),
         FETCH_SIZE: 1000,
         SQL_PARSER_HOST: 'http://localhost:8080'
     })
@@ -121,11 +118,6 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         self._conf = conf
 
         # Database configs
-        self.cluster = conf.get_string(self.CLUSTER_KEY)
-        if conf.get_bool(self.USE_CATALOG_AS_CLUSTER_NAME):
-            self.cluster_source = "query_history.database_name"
-        else:
-            self.cluster_source = f"'{self.cluster}'"
         self.database = conf.get_string(self.DATABASE_KEY)
         self.snowflake_database = conf.get_string(self.SNOWFLAKE_DATABASE_KEY)
         self.default_schema = conf.get_string(self.DEFAULT_SCHEMA_KEY)
@@ -382,7 +374,6 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         self._try_close_connector()
 
         sql_stmt = self.SQL_STATEMENT.format(
-            cluster_source=self.cluster_source,
             start_timestamp=self.start_timestamp.strftime(self.SNOWFLAKE_TIMESTAMP_FMT),
             end_timestamp=self.end_timestamp.strftime(self.SNOWFLAKE_TIMESTAMP_FMT),
             limit=self.fetch_size,
