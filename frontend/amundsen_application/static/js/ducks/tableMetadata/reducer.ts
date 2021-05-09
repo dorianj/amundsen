@@ -66,6 +66,8 @@ export const initialTableDataState: TableMetadata = {
   resource_reports: [],
   watermarks: [],
   programmatic_descriptions: {},
+  common_joins: [],
+  common_filters: [],
 };
 
 export const initialTableLineageState = {

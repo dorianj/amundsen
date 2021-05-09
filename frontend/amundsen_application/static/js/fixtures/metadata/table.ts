@@ -99,6 +99,54 @@ export const tableMetadata: TableMetadata = {
       badges: [],
     },
   ],
+  common_joins: [
+    {
+      column: 'date',
+      join_sql: 'ca_covid.open_data.statewide_testing a join ca_covid.open_data.statewide_cases b on a.date = b.date',
+      join_type: 'inner join',
+      joined_on_table: {
+        database: 'database',
+        cluster: 'cluster',
+        schema: 'schema',
+        name: 'table',
+        description: 'desc',
+        schema_description: 'desc2',
+      },
+      joined_on_column: 'dt',
+    },
+    {
+      column: 'user_id',
+      join_sql: 'this.table left outer join another.table c on c.user_id = this.table.user_id',
+      join_type: 'left outer join',
+      joined_on_table: {
+        database: 'database',
+        cluster: 'cluster',
+        schema: 'schema',
+        name: 'table',
+        description: 'desc',
+        schema_description: 'desc2',
+      },
+      joined_on_column: 'data',
+    }
+  ],
+  common_filters: [
+    {
+      where_clause: 'where field is > 3',
+      alias_mapping: [
+        {
+          alias: 'a',
+          table: {
+            database: 'database',
+            cluster: 'cluster',
+            schema: 'schema',
+            name: 'table',
+            description: 'desc',
+            schema_description: 'desc2'
+          }
+        }
+      ]
+    }
+  ],
   database: 'hive',
   description:
     'One row per ride request, showing all stages of the ride funnel. ',

@@ -31,6 +31,33 @@ export interface ColumnUniqueValues {
   count: number;
 }
 
+export interface SimpleTableRef {
+  database: string;
+  schema: string;
+  name: string;
+  cluster: string;
+  description: string;
+  schema_description: string;
+}
+
+export interface TableCommonJoin{
+  column: string;
+  joined_on_table: SimpleTableRef;
+  joined_on_column: string;
+  join_sql: string;
+  join_type: string;
+}
+
+export interface AliasMapping{
+  alias: string;
+  table: SimpleTableRef;
+}
+
+export interface TableCommonFilter{
+  where_clause: string;
+  alias_mapping: AliasMapping[];
+}
+
 // TODO - Make this reusable for dashboards
 export interface TableReader {
   read_count: number;
@@ -111,6 +138,8 @@ export interface TableMetadata {
   resource_reports: ResourceReport[];
   watermarks: Watermark[];
   programmatic_descriptions: TableProgrammaticDescriptions;
+  common_joins: TableCommonJoin[];
+  common_filters: TableCommonFilter[];
 }
 
 export interface UpdateOwnerPayload {

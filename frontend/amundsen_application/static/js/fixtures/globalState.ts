@@ -177,6 +177,8 @@ const globalState: GlobalState = {
       resource_reports: [],
       watermarks: [],
       programmatic_descriptions: {},
+      common_joins: [],
+      common_filters: [],
     },
     tableLineage: {
       lineage: {

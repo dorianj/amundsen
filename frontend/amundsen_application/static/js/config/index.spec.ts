@@ -343,6 +343,8 @@ describe('generateExploreUrl', () => {
     resource_reports: [],
     watermarks: [],
     programmatic_descriptions: {},
+    common_joins: [],
+    common_filters: [],
   };
 
   it('calls `exploreUrlGenerator` with table metadata', () => {
@@ -449,6 +451,8 @@ describe('getColumnLineageLink', () => {
       resource_reports: [],
       watermarks: [],
       programmatic_descriptions: {},
+      common_joins: [],
+      common_filters: [],
     };
     const columnName = 'column_name';
     const actual = ConfigUtils.getColumnLineageLink(tableData, columnName);
