@@ -127,8 +127,7 @@ class Neo4jProxy(BaseProxy):
                       is_view=self._safe_get(last_neo4j_record, 'tbl', 'is_view'),
                       programmatic_descriptions=prog_descs,
                       common_joins=joins,
-                      common_filters=filters
-                    )
+                      common_filters=filters)
 
         return table
 
@@ -332,7 +331,7 @@ class Neo4jProxy(BaseProxy):
             },
             join_exec_cnt: join_exec_cnt
         }) as joins
-		WITH tbl, joins
+        WITH tbl, joins
         OPTIONAL MATCH (tbl)-[:COLUMN]->(col:Column)-[USES_WHERE_CLAUSE]->(whr:Where)-[WHERE_CLAUSE_OF]
             ->(wq:Query)-[:HAS_EXECUTION]->(whrexec:Execution)
         WITH tbl,joins,
@@ -350,7 +349,7 @@ class Neo4jProxy(BaseProxy):
         table_query_records = query_records.single()
 
         joins = self._extract_joins_from_query(table_query_records.get('joins', [{}]))
-        filters = self._extract_filters_from_query(table_query_records['filters'])
+        filters = self._extract_filters_from_query(table_query_records.get('filters', [{}]))
 
         return joins, filters
 

@@ -11,7 +11,6 @@ from databuilder.stemma.sql_parsing.sql_table import SqlTable
 from databuilder.stemma.sql_parsing.sql_where import WhereClause
 
 
-
 class TestSqlParsing(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -94,7 +93,6 @@ class TestSqlParsing(unittest.TestCase):
         invalid_resp_val1 = {'fields': ['something']}
         invalid_resp1 = self.default_sql_parser._is_valid_table_where_resp(invalid_resp_val1)
         self.assertFalse(invalid_resp1)
-
 
     def test_is_valid_lineage_resp(self) -> None:
         resp_val = {'dbobjs': ['some_val'], 'relations': ['something']}
@@ -194,7 +192,6 @@ class TestSqlParsing(unittest.TestCase):
             self.assertEquals(tbl.schema, expected_tables_cols[tbl.table]['schema'])
             self.assertEquals(tbl.cluster, expected_tables_cols[tbl.table]['cluster'])
 
-
     @mock.patch('databuilder.stemma.sql_parsing.sql_parsing.SqlParser._post')
     def test_get_tables_joins(self, mock_post_proxy_client: MagicMock) -> None:
         response = {
@@ -235,7 +232,6 @@ class TestSqlParsing(unittest.TestCase):
         self.assertEquals(joins[0].right_table.columns[0], expected_join['right_column'])
         self.assertEquals(joins[0].join_type, expected_join['join_type'])
 
-
     @mock.patch('databuilder.stemma.sql_parsing.sql_parsing.SqlParser._post')
     def test_get_query_wheres(self, mock_post_proxy_client: MagicMock) -> None:
         response = {
@@ -248,8 +244,7 @@ class TestSqlParsing(unittest.TestCase):
                     'full_clause': 'a.tested <= b.totalcountconfirmed * 100',
                     'operator': '<=',
                     'right_arg': 'b.totalcountconfirmed * 100',
-                    'left_arg':
-                    'a.tested'
+                    'left_arg': 'a.tested'
                 },
                 {
                     'tables': {
@@ -266,16 +261,12 @@ class TestSqlParsing(unittest.TestCase):
         mock_post_proxy_client.return_value = response
 
         wheres = self.default_sql_parser.get_query_wheres()
-        expected_wheres = {
-            'right_column': 'tested',
-            'right_table': 'statewide_testing',
-            'join_type': 'inner join',
-            'left_table': 'statewide_cases',
-            'operator': '<=',
-            'left_column': 'newcountconfirmed'
-        }
+
         self.assertEqual(len(wheres), 2)
         self.assertTrue([all(isinstance(w, WhereClause) for w in wheres)])
+        self.assertEqual(wheres[0].left_arg, 'a.tested')
+        self.assertEqual(wheres[0].operator, '<=')
+        self.assertEqual(wheres[0].right_arg, 'b.totalcountconfirmed * 100')
 
         where1_tables = ['statewide_testing', 'statewide_cases']
         self.assertEqual([tbl.table for tbl in wheres[0].tables], where1_tables)

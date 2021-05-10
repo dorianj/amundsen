@@ -3,14 +3,11 @@
 
 import datetime as dt
 import logging
-from collections import namedtuple
-from itertools import groupby
 from typing import (
-    Any, Dict, Iterator, List, Union,
+    Dict, Iterator, List, Union,
 )
 
 from pyhocon import ConfigFactory, ConfigTree
-from unidecode import unidecode
 
 from databuilder.extractor import sql_alchemy_extractor
 from databuilder.extractor.base_extractor import Extractor
@@ -112,7 +109,6 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     SNOWFLAKE_TIMESTAMP_FMT = '%Y-%m-%d %H:%M:%S'
     VALID_TS_FORMATS = [SNOWFLAKE_DATE_FMT, SNOWFLAKE_TIMESTAMP_FMT]
 
-
     def init(self, conf: ConfigTree) -> None:
         conf = conf.with_fallback(self.DEFAULT_CONFIG)
         self._conf = conf
@@ -140,7 +136,7 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         self._try_close_connector()
 
     def _try_close_connector(self) -> None:
-        if getattr(self, '_alchemy_extractor', None) is not None:
+        if getattr(self, '_alchemy_extractor', None) and self._alchemy_extractor is not None:
             self._alchemy_extractor.close()
 
     def extract(self) -> Union[TableMetadata, None]:
@@ -163,9 +159,9 @@ class SnowflakeQueryMetadataExtractor(Extractor):
                 pass
 
         raise InvalidSnowflakeTimestamp(
-            'The timestamp provided: %s does not match of of the required formats: %s', ts, SnowflakeQueryMetadataExtractor.VALID_TS_FORMATS
+            'The timestamp provided: %s does not match of of the required formats: %s',
+            ts, SnowflakeQueryMetadataExtractor.VALID_TS_FORMATS
         )
-
 
     def _get_query_metadata(self, tables_columns: List[SqlTable], sql: str, clean_sql: str,
                             user: UserMetadata = None) -> QueryMetadata:
@@ -193,14 +189,13 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         )
 
     def _get_query_where_metadata(self, query_wheres: List[WhereClause],
-                                        query_metadata: QueryMetadata = None) -> List[QueryWhereMetadata]:
+                                  query_metadata: QueryMetadata) -> List[QueryWhereMetadata]:
         """
         Converts a list of Stemma `WhereClauses` into a list of `QueryWhereMetadata` models objects.
         """
-        all_wheres = []
+        all_wheres: List[QueryWhereMetadata] = []
         for where in query_wheres:
             where_tables = []
-            alias_mapping = {}
             for where_tbl in where.tables:
                 where_tm = TableMetadata(
                     database=self.database,
@@ -209,15 +204,11 @@ class SnowflakeQueryMetadataExtractor(Extractor):
                     name=where_tbl.table,
                     description=None,
                     columns=[
-                        ColumnMetadata(name=where_col, description=None, col_type=None, sort_order=ind)
+                        ColumnMetadata(name=where_col, description='', col_type='', sort_order=ind)
                         for ind, where_col in enumerate(where_tbl.columns)
                     ]
                 )
                 where_tables.append(where_tm)
-                # The SQL Parser API attempts to add aliases if they do not exist. This creates a map of the alias
-                # to the table metadata required to build hpyer link URLs in the frontend. Alises will be
-                # replaced with the hyperlink table name
-                alias_mapping[where_tbl.table_id] = {'alias': where.aliases[where_tbl.table_id], 'table': where_tbl}
 
             qw = QueryWhereMetadata(
                 tables=where_tables,
@@ -226,13 +217,14 @@ class SnowflakeQueryMetadataExtractor(Extractor):
                 right_arg=where.right_arg,
                 operator=where.operator,
                 query_metadata=query_metadata,
-                alias_mapping=alias_mapping,
+                alias_mapping=where.alias_mapping,
                 yield_relation_nodes=True
             )
             all_wheres.append(qw)
         return all_wheres
 
-    def _get_query_join_metadata(self, table_joins: List[SqlJoin], query_metadata: QueryMetadata = None) -> List[QueryJoinMetadata]:
+    def _get_query_join_metadata(self, table_joins: List[SqlJoin],
+                                 query_metadata: QueryMetadata) -> List[QueryJoinMetadata]:
         """
         Converts a list of Stemma `SqlJoin` into a list of `QueryJoinMetadata` models objects.
         Optionally also associates the `QueryJoinMetadata` to a `QueryMetadata` object.
@@ -242,7 +234,7 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         for join in table_joins:
             # Left side of join
             left_cols_in_join = [
-                ColumnMetadata(name=join.left_table.columns[0], description=None, col_type=None, sort_order=0)
+                ColumnMetadata(name=join.left_table.columns[0], description='', col_type='', sort_order=0)
             ]
             left_table_md = TableMetadata(
                 database=self.database,
@@ -255,7 +247,7 @@ class SnowflakeQueryMetadataExtractor(Extractor):
 
             # Right side of join
             right_cols_in_join = [
-                ColumnMetadata(name=join.right_table.columns[0], description=None, col_type=None, sort_order=0)
+                ColumnMetadata(name=join.right_table.columns[0], description='', col_type='', sort_order=0)
             ]
             right_table_md = TableMetadata(
                 database=self.database,
@@ -269,8 +261,8 @@ class SnowflakeQueryMetadataExtractor(Extractor):
             qjm = QueryJoinMetadata(
                 left_table=left_table_md,
                 right_table=right_table_md,
-                left_column=left_table_md.columns[0],
-                right_column=right_table_md.columns[0],
+                left_column=left_cols_in_join[0],
+                right_column=right_cols_in_join[0],
                 join_type=join.join_type,
                 join_operator=join.join_operator,
                 join_sql=join.join_sql,
@@ -280,7 +272,7 @@ class SnowflakeQueryMetadataExtractor(Extractor):
             all_joins.append(qjm)
         return all_joins
 
-    def _create_query_metadata(self):
+    def _create_query_metadata(self) -> None:
         """
         Creates the following models from the output of a parsed SQL string.
             # 1. Table > Query Relationship
@@ -289,15 +281,16 @@ class SnowflakeQueryMetadataExtractor(Extractor):
             # 4. Query > Query Execution (aggregation) Relationship
             # 5. TODO: User / table usage (once we have proper user ID mapping)
         """
-        results = []
-        query_executions = {}
+        results: List[Union[QueryMetadata, QueryExecutionsMetadata, QueryJoinMetadata, QueryWhereMetadata]] = []
+        query_executions: Dict[str, QueryMetadata] = {}
+        query_execution_cnts: Dict[str, int] = {}
 
         has_next = True
         while has_next:
             self._create_update_sql_alchemy_extractor()
             batch_cnt = 0
 
-            row = self._alchemy_extractor.extract()
+            row = self._alchemy_extractor.extract()  # type: ignore
             while row:
                 sp = SqlParser(
                     host=self._sql_parser_host,
@@ -312,7 +305,10 @@ class SnowflakeQueryMetadataExtractor(Extractor):
 
                 # 1. Table > Query Relationship
                 tbl_cols = sp.get_tables_columns()
-                query_metadata = self._get_query_metadata(tables_columns=tbl_cols, sql=sp.sql, clean_sql=sp.get_clean_sql(), user=user)
+                query_metadata = self._get_query_metadata(tables_columns=tbl_cols,
+                                                          sql=sp.sql,
+                                                          clean_sql=sp.get_clean_sql(),
+                                                          user=user)
                 results.append(query_metadata)
 
                 # Keep track of all "unique" queries. Even though Neo4j will dedupe events for us we can reduce loading
@@ -321,32 +317,31 @@ class SnowflakeQueryMetadataExtractor(Extractor):
 
                     # 2. Column > Where Relationship
                     query_wheres = sp.get_query_wheres()
-                    query_wheres = self._get_query_where_metadata(query_wheres=query_wheres, query_metadata=query_metadata)
-                    results.extend(query_wheres)
+                    query_where_metadatas = self._get_query_where_metadata(query_wheres=query_wheres,
+                                                                           query_metadata=query_metadata)
+                    results.extend(query_where_metadatas)
 
                     # 3. Column > Join & Query > Join
                     tbl_joins = sp.get_tables_joins()
                     query_joins = self._get_query_join_metadata(table_joins=tbl_joins, query_metadata=query_metadata)
                     results.extend(query_joins)
 
-                    query_executions[query_metadata.sql_hash] = {
-                        'query_metadata': query_metadata,
-                        'exec_count': 0
-                    }
+                    query_executions[query_metadata.sql_hash] = query_metadata
+                    query_execution_cnts[query_metadata.sql_hash] = 0
 
                 # 4. Query executions
-                query_executions[query_metadata.sql_hash]['exec_count'] += 1
+                query_execution_cnts[query_metadata.sql_hash] += 1
 
                 batch_cnt += 1
-                row = self._alchemy_extractor.extract()
+                row = self._alchemy_extractor.extract()  # type: ignore
 
             if batch_cnt < self.fetch_size:
                 has_next = False
 
-        for query in query_executions.values():
+        for exec_key, query_exec_metadata in query_executions.items():
             qem = QueryExecutionsMetadata(
-                query_metadata=query['query_metadata'],
-                execution_count=query['exec_count'],
+                query_metadata=query_exec_metadata,
+                execution_count=query_execution_cnts[exec_key],
                 start_time=self.start_timestamp_millis,
                 window_duration=QueryExecutionsMetadata.EXECUTION_WINDOW_DAILY
             )
@@ -354,7 +349,14 @@ class SnowflakeQueryMetadataExtractor(Extractor):
 
         self.iter_results = results
 
-    def _get_extract_iter(self) -> Iterator[QueryMetadata]:
+    def _get_extract_iter(self) -> Iterator[
+        Union[
+            QueryMetadata,
+            QueryExecutionsMetadata,
+            QueryJoinMetadata,
+            QueryWhereMetadata
+        ]
+    ]:
         """
         Using itertools.groupby and raw level iterator, it groups to table and yields QueryMetadata
         :return:
@@ -381,4 +383,4 @@ class SnowflakeQueryMetadataExtractor(Extractor):
         )
         # Update offset
         self.current_offset += self.fetch_size
-        self._alchemy_extractor = sql_alchemy_extractor.from_surrounding_config(self._conf, sql_stmt)
+        self._alchemy_extractor = sql_alchemy_extractor.from_surrounding_config(self._conf, sql_stmt)  # type: ignore

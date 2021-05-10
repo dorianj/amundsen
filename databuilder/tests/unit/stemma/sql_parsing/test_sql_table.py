@@ -17,7 +17,9 @@ class TestSqlJoin(unittest.TestCase):
         self.assertEqual(tbl.schema, DEFAULT_SCHEMA)
         self.assertEqual(tbl.table, 'my_table')
 
-        schema_tbl = SqlTable(table_reference='my_schema.my_table', default_cluster=DEFAULT_CLUSTER, default_schema=DEFAULT_SCHEMA)
+        schema_tbl = SqlTable(table_reference='my_schema.my_table',
+                              default_cluster=DEFAULT_CLUSTER,
+                              default_schema=DEFAULT_SCHEMA)
         self.assertEqual(schema_tbl.cluster, DEFAULT_CLUSTER)
         self.assertEqual(schema_tbl.schema, 'my_schema')
         self.assertEqual(schema_tbl.table, 'my_table')

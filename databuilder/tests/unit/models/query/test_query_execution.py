@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import unittest
-from unittest.mock import ANY
 
 from databuilder.models.graph_serializable import (
     RELATION_END_KEY, RELATION_END_LABEL, RELATION_REVERSE_TYPE, RELATION_START_KEY, RELATION_START_LABEL,
@@ -11,8 +10,6 @@ from databuilder.models.graph_serializable import (
 from databuilder.models.query.query import QueryMetadata
 from databuilder.models.query.query_execution import QueryExecutionsMetadata
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
-from databuilder.models.user import User
-from databuilder.stemma.sql_parsing.sql_table import SqlTable
 
 from databuilder.serializers import neo4_serializer
 
@@ -30,17 +27,15 @@ class TestQueryExecution(unittest.TestCase):
             'test_table1',
             'test_table1',
             [
-                ColumnMetadata('field', None, None, 0),
+                ColumnMetadata('field', '', '', 0),
             ]
         )
         self.query_metadata = QueryMetadata(sql="select * from table a where a.field > 3",
                                             tables=[self.table_metadata])
 
-        self.query_join_metadata = QueryExecutionsMetadata(
-                 query_metadata=self.query_metadata,
-                 start_time=10,
-                 execution_count=7
-        )
+        self.query_join_metadata = QueryExecutionsMetadata(query_metadata=self.query_metadata,
+                                                           start_time=10,
+                                                           execution_count=7)
         self._expected_key = '6caeee4c1c393848293d1aabea87355b-10'
 
     def test_get_model_key(self) -> None:
@@ -77,13 +72,12 @@ class TestQueryExecution(unittest.TestCase):
         self.maxDiff = None
         expected_relations = [
             {
-                'END_KEY': self._expected_key,
-                'END_LABEL': QueryExecutionsMetadata.NODE_LABEL,
-                'REVERSE_TYPE': QueryExecutionsMetadata.INVERSE_QUERY_EXECUTION_RELATION_TYPE,
-                'START_KEY': self.query_metadata.get_key_self(),
-                'START_LABEL': QueryMetadata.NODE_LABEL,
-                'TYPE': QueryExecutionsMetadata.QUERY_EXECUTION_RELATION_TYPE
+                RELATION_END_KEY: self._expected_key,
+                RELATION_END_LABEL: QueryExecutionsMetadata.NODE_LABEL,
+                RELATION_REVERSE_TYPE: QueryExecutionsMetadata.INVERSE_QUERY_EXECUTION_RELATION_TYPE,
+                RELATION_START_KEY: self.query_metadata.get_key_self(),
+                RELATION_START_LABEL: QueryMetadata.NODE_LABEL,
+                RELATION_TYPE: QueryExecutionsMetadata.QUERY_EXECUTION_RELATION_TYPE
             }
         ]
         self.assertEquals(expected_relations, actual)
-

@@ -2,16 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import hashlib
-import re
 import textwrap
 from typing import (
-    Iterator, List, Optional, Union,
+    Iterator, List, Optional,
 )
 
 from databuilder.models.graph_node import GraphNode
 from databuilder.models.graph_relationship import GraphRelationship
 from databuilder.models.graph_serializable import GraphSerializable
-from databuilder.models.table_serializable import TableSerializable
 from databuilder.models.table_metadata import TableMetadata
 from databuilder.models.user import User as UserMetadata
 
@@ -61,7 +59,7 @@ class QueryMetadata(GraphSerializable):
     def __repr__(self) -> str:
         return f'QueryMetadata(SQL: {self._sql_begin}, Tables: {self.table_keys})'
 
-    def _get_sql_hash(self, sql) -> str:
+    def _get_sql_hash(self, sql: str) -> str:
         """
         Generates a unique SQL hash. Attempts to remove any formatting from the
         SQL code where possible.
@@ -92,7 +90,7 @@ class QueryMetadata(GraphSerializable):
             return None
 
     @staticmethod
-    def get_key(sql_hash) -> str:
+    def get_key(sql_hash: str) -> str:
         return QueryMetadata.KEY_FORMAT.format(sql_hash=sql_hash)
 
     def get_key_self(self) -> str:
@@ -142,8 +140,10 @@ class QueryMetadata(GraphSerializable):
                 for tbl_item in table._create_next_node():
                     yield tbl_item
             if self.user:
-                for usr_item in self.user._create_next_node():
-                    yield usr_item
+                usr = self.user.create_next_node()
+                while usr:
+                    yield usr
+                    usr = self.user.create_next_node()
 
     def _create_relation_iterator(self) -> Iterator[GraphRelationship]:
         relations = self.get_query_relations()

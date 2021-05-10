@@ -1,19 +1,14 @@
 # Copyright Contributors to the Amundsen project.
 # SPDX-License-Identifier: Apache-2.0
 
-import hashlib
-import re
-import textwrap
 from typing import (
-    Iterator, List, Optional, Union,
+    Iterator, Optional, Union
 )
 
 from databuilder.models.graph_node import GraphNode
 from databuilder.models.graph_relationship import GraphRelationship
 from databuilder.models.graph_serializable import GraphSerializable
 from databuilder.models.query.query import QueryMetadata
-from databuilder.models.table_serializable import TableSerializable
-from databuilder.models.table_metadata import TableMetadata
 
 
 class QueryExecutionsMetadata(GraphSerializable):
@@ -81,13 +76,13 @@ class QueryExecutionsMetadata(GraphSerializable):
             return None
 
     @staticmethod
-    def get_key(query_key, start_time) -> str:
+    def get_key(query_key: str, start_time: Union[str, int]) -> str:
         return QueryExecutionsMetadata.KEY_FORMAT.format(query_key=query_key, start_time=start_time)
 
     def get_key_self(self) -> str:
         return QueryExecutionsMetadata.get_key(query_key=self.query_metadata.get_key_self(), start_time=self.start_time)
 
-    def get_query_relations(self) -> List[GraphRelationship]:
+    def get_query_relations(self) -> Iterator[GraphRelationship]:
         yield GraphRelationship(
             start_label=QueryMetadata.NODE_LABEL,
             end_label=self.NODE_LABEL,

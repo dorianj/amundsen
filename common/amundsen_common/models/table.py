@@ -1,7 +1,7 @@
 # Copyright Contributors to the Amundsen project.
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import attr
 
@@ -145,7 +145,6 @@ class ProgrammaticDescriptionSchema(AttrsSchema):
     class Meta:
         target = ProgrammaticDescription
         register_as_scheme = True
-
 
 
 @attr.s(auto_attribs=True, kw_only=True)

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import unittest
-from unittest.mock import ANY
 
 from databuilder.models.graph_serializable import (
     RELATION_END_KEY, RELATION_END_LABEL, RELATION_REVERSE_TYPE, RELATION_START_KEY, RELATION_START_LABEL,
@@ -13,8 +12,6 @@ from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
 from databuilder.models.user import User
 
 from databuilder.serializers import neo4_serializer
-
-
 
 
 class TestQuery(unittest.TestCase):
@@ -102,4 +99,3 @@ class TestQuery(unittest.TestCase):
         ]
 
         self.assertEquals(expected_relations, actual)
-

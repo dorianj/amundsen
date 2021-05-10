@@ -72,6 +72,7 @@ BASE_CONFS = {
 SNOWFLAKE_DATABASE_KEY = 'SNOWFLAKE_SAMPLE_DATA'
 SNOWFLAKE_DEFAULT_SCHEMA = 'TPCDS_SF100TCL'
 
+
 # todo: connection string needs to change
 def connection_string():
     # Refer this doc: https://docs.snowflake.com/en/user-guide/sqlalchemy.html#connection-parameters
@@ -97,13 +98,15 @@ def create_sample_snowflake_job():
 
     job_confs = BASE_CONFS.copy()
     query_confs = {
-        f'extractor.snowflake_query_metadata.extractor.sqlalchemy.{SQLAlchemyExtractor.CONN_STRING}': connection_string(),
-        f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.SNOWFLAKE_DATABASE_KEY}': SNOWFLAKE_DATABASE_KEY,
-        f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.DEFAULT_SCHEMA_KEY}': SNOWFLAKE_DEFAULT_SCHEMA,
+        f'extractor.snowflake_query_metadata.extractor.sqlalchemy.{SQLAlchemyExtractor.CONN_STRING}':
+            connection_string(),
+        f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.SNOWFLAKE_DATABASE_KEY}':
+            SNOWFLAKE_DATABASE_KEY,
+        f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.DEFAULT_SCHEMA_KEY}':
+            SNOWFLAKE_DEFAULT_SCHEMA,
         f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.START_TIMESTAMP}': yest_day,
         f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.END_TIMESTAMP}': today,
         f'extractor.snowflake_query_metadata.{SnowflakeQueryMetadataExtractor.FETCH_SIZE}': 20
-
     }
     job_confs.update(query_confs)
     job_config = ConfigFactory.from_dict(job_confs)

@@ -1,20 +1,18 @@
 # Copyright Contributors to the Amundsen project.
 # SPDX-License-Identifier: Apache-2.0
 
-from enum import Enum
 import hashlib
-import re
 import textwrap
 from typing import (
-    Dict, Iterator, List, Optional, Union,
+    Dict, Iterator, List, Optional
 )
 
 from databuilder.models.graph_node import GraphNode
 from databuilder.models.graph_relationship import GraphRelationship
 from databuilder.models.graph_serializable import GraphSerializable
 from databuilder.models.query.query import QueryMetadata
-from databuilder.models.table_serializable import TableSerializable
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
+from databuilder.stemma.sql_parsing.sql_where import WhereAlias
 
 
 class QueryWhereMetadata(GraphSerializable):
@@ -53,10 +51,9 @@ class QueryWhereMetadata(GraphSerializable):
                  left_arg: str,
                  right_arg: str,
                  operator: str,
-                 query_metadata: Optional[QueryMetadata] = None,
-                 yield_relation_nodes: bool = False,
-                 alias_mapping: Optional[Dict[str, str]] = None
-                ):
+                 query_metadata: QueryMetadata,
+                 alias_mapping: Dict[str, WhereAlias],
+                 yield_relation_nodes: bool = False):
         self.tables = tables
         self.where_clause = where_clause
         self.left_arg = left_arg
@@ -66,7 +63,7 @@ class QueryWhereMetadata(GraphSerializable):
         self.yield_relation_nodes = yield_relation_nodes
         # Mappings are used by the frontend to allow string substititions
         # and hyperlinks to be built around aliases
-        self.alias_mapping = alias_mapping # self._set_alias_mapping(tables=tables, alias_mapping=alias_mapping)
+        self.alias_mapping = alias_mapping
         self._table_hash = self._get_table_hash(self.tables)
         self._where_hash = self._get_where_hash(self.where_clause)
         self._node_iter = self._create_next_node()
@@ -78,20 +75,7 @@ class QueryWhereMetadata(GraphSerializable):
             tbl_str += f' + {len(self.tables) - 1} other tables'
         return f'QueryWhereMetadata(Table: {tbl_str}, {self.where_clause[:25]})'
 
-    def _set_alias_mapping(self, tables: List[TableMetadata], alias_mapping: Dict[str, str]) -> Dict[str, TableMetadata]:
-        """
-        Associates the corresponding alias from an input list of tables by
-        retrieving their alias name from the `alias_mapping` input dictionary.
-        """
-        alias_mapping = alias_mapping or {}
-        final_alias_mappings = {}
-
-        for table in tables:
-            if table._get_table_key() in alias_mapping:
-                final_alias_mappings[alias_mapping[table._get_table_key()]] = table
-        return final_alias_mappings
-
-    def _get_table_hash(self, where_clause) -> str:
+    def _get_table_hash(self, tables: List[TableMetadata]) -> str:
         """
         Generates a unique hash for a set of tables that are associated to a where clause. Since
         we do not want multiple instances of this where clause represented in the database we may
@@ -99,14 +83,14 @@ class QueryWhereMetadata(GraphSerializable):
         key across multiple tables by concatenating all of the table keys together and creating a
         hash (to shorten the value).
         """
-        tbl_keys = ''.join(list(sorted([t._get_table_key() for t in self.tables])))
+        tbl_keys = ''.join(list(sorted([t._get_table_key() for t in tables])))
         return hashlib.md5(tbl_keys.encode('utf-8')).hexdigest()
 
-    def _get_where_hash(self, where_clause) -> str:
+    def _get_where_hash(self, where_clause: str) -> str:
         """
         Generates a unique hash for a where clause.
         """
-        sql_no_fmt = textwrap.dedent(where_clause).replace(' ','').replace('\n', '').strip().lower()
+        sql_no_fmt = textwrap.dedent(where_clause).replace(' ', '').replace('\n', '').strip().lower()
         return hashlib.md5(sql_no_fmt.encode('utf-8')).hexdigest()
 
     def create_next_node(self) -> Optional[GraphNode]:
@@ -123,13 +107,13 @@ class QueryWhereMetadata(GraphSerializable):
             return None
 
     @staticmethod
-    def get_key(table_hash, where_hash) -> str:
+    def get_key(table_hash: str, where_hash: str) -> str:
         return QueryWhereMetadata.KEY_FORMAT.format(table_hash=table_hash, where_hash=where_hash)
 
     def get_key_self(self) -> str:
         return QueryWhereMetadata.get_key(table_hash=self._table_hash, where_hash=self._where_hash)
 
-    def get_query_relations(self) -> List[GraphRelationship]:
+    def get_query_relations(self) -> Iterator[GraphRelationship]:
         for table in self.tables:
             for col in table.columns:
                 yield GraphRelationship(
@@ -168,11 +152,11 @@ class QueryWhereMetadata(GraphSerializable):
                 self.RIGHT_ARG: self.right_arg,
                 self.OPERATOR: self.operator,
                 self.ALIAS_MAPPING: {
-                    alias_item['alias']: {
+                    alias_item.alias: {
                         'database': self.tables[0].database,  # All tables should share the same database
-                        'cluster': alias_item['table'].cluster,
-                        'schema': alias_item['table'].schema,
-                        'name': alias_item['table'].table
+                        'cluster': alias_item.table.cluster,
+                        'schema': alias_item.table.schema,
+                        'name': alias_item.table.table
                     }
                     for alias_item in self.alias_mapping.values()
                 }

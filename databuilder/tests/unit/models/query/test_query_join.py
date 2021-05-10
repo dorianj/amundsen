@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import unittest
-from unittest.mock import ANY
 
 from databuilder.models.graph_serializable import (
     RELATION_END_KEY, RELATION_END_LABEL, RELATION_REVERSE_TYPE, RELATION_START_KEY, RELATION_START_LABEL,
@@ -11,8 +10,6 @@ from databuilder.models.graph_serializable import (
 from databuilder.models.query.query import QueryMetadata
 from databuilder.models.query.query_join import QueryJoinMetadata
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
-from databuilder.models.user import User
-from databuilder.stemma.sql_parsing.sql_table import SqlTable
 
 from databuilder.serializers import neo4_serializer
 
@@ -23,7 +20,7 @@ class TestQueryJoin(unittest.TestCase):
         super(TestQueryJoin, self).setUp()
         # Display full diffs
         self.maxDiff = None
-        self.tbl1_col = ColumnMetadata('field', None, None, 0)
+        self.tbl1_col = ColumnMetadata('field', '', '', 0)
         self.left_table_metadata = TableMetadata(
             'hive',
             'gold',
@@ -32,7 +29,7 @@ class TestQueryJoin(unittest.TestCase):
             'test_table1 desc',
             [self.tbl1_col]
         )
-        self.tbl2_col = ColumnMetadata('field', None, None, 0)
+        self.tbl2_col = ColumnMetadata('field', '', '', 0)
         self.right_table_metadata = TableMetadata(
             'hive',
             'gold',
@@ -105,32 +102,30 @@ class TestQueryJoin(unittest.TestCase):
             actual.append(serialized_relation)
             relation = self.query_join_metadata.create_next_relation()
 
-        self.maxDiff = None
         expected_relations = [
             {
-                'END_KEY': self._expected_key,
-                'END_LABEL': QueryJoinMetadata.NODE_LABEL,
-                'REVERSE_TYPE': QueryJoinMetadata.INVERSE_COLUMN_JOIN_RELATION_TYPE,
-                'START_KEY': 'hive://gold.test_schema1/test_table1/field',
-                'START_LABEL': ColumnMetadata.COLUMN_NODE_LABEL,
-                'TYPE': QueryJoinMetadata.COLUMN_JOIN_RELATION_TYPE
+                RELATION_END_KEY: self._expected_key,
+                RELATION_END_LABEL: QueryJoinMetadata.NODE_LABEL,
+                RELATION_REVERSE_TYPE: QueryJoinMetadata.INVERSE_COLUMN_JOIN_RELATION_TYPE,
+                RELATION_START_KEY: 'hive://gold.test_schema1/test_table1/field',
+                RELATION_START_LABEL: ColumnMetadata.COLUMN_NODE_LABEL,
+                RELATION_TYPE: QueryJoinMetadata.COLUMN_JOIN_RELATION_TYPE
             },
             {
-                'END_KEY': self._expected_key,
-                'END_LABEL': QueryJoinMetadata.NODE_LABEL,
-                'REVERSE_TYPE': QueryJoinMetadata.INVERSE_COLUMN_JOIN_RELATION_TYPE,
-                'START_KEY': 'hive://gold.test_schema1/test_table2/field',
-                'START_LABEL': ColumnMetadata.COLUMN_NODE_LABEL,
-                'TYPE': QueryJoinMetadata.COLUMN_JOIN_RELATION_TYPE
+                RELATION_END_KEY: self._expected_key,
+                RELATION_END_LABEL: QueryJoinMetadata.NODE_LABEL,
+                RELATION_REVERSE_TYPE: QueryJoinMetadata.INVERSE_COLUMN_JOIN_RELATION_TYPE,
+                RELATION_START_KEY: 'hive://gold.test_schema1/test_table2/field',
+                RELATION_START_LABEL: ColumnMetadata.COLUMN_NODE_LABEL,
+                RELATION_TYPE: QueryJoinMetadata.COLUMN_JOIN_RELATION_TYPE
             },
             {
-                'END_KEY': self._expected_key,
-                'END_LABEL': QueryJoinMetadata.NODE_LABEL,
-                'REVERSE_TYPE': QueryJoinMetadata.INVERSE_QUERY_JOIN_RELATION_TYPE,
-                'START_KEY': '6caeee4c1c393848293d1aabea87355b',
-                'START_LABEL': QueryMetadata.NODE_LABEL,
-                'TYPE': QueryJoinMetadata.QUERY_JOIN_RELATION_TYPE
+                RELATION_END_KEY: self._expected_key,
+                RELATION_END_LABEL: QueryJoinMetadata.NODE_LABEL,
+                RELATION_REVERSE_TYPE: QueryJoinMetadata.INVERSE_QUERY_JOIN_RELATION_TYPE,
+                RELATION_START_KEY: '6caeee4c1c393848293d1aabea87355b',
+                RELATION_START_LABEL: QueryMetadata.NODE_LABEL,
+                RELATION_TYPE: QueryJoinMetadata.QUERY_JOIN_RELATION_TYPE
             }
         ]
         self.assertEquals(expected_relations, actual)
-

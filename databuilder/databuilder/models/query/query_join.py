@@ -1,19 +1,14 @@
 # Copyright Contributors to the Amundsen project.
 # SPDX-License-Identifier: Apache-2.0
 
-from enum import Enum
-import hashlib
-import re
-import textwrap
 from typing import (
-    Iterator, List, Optional, Union,
+    Iterator, Optional,
 )
 
 from databuilder.models.graph_node import GraphNode
 from databuilder.models.graph_relationship import GraphRelationship
 from databuilder.models.graph_serializable import GraphSerializable
 from databuilder.models.query.query import QueryMetadata
-from databuilder.models.table_serializable import TableSerializable
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
 
 
@@ -64,8 +59,7 @@ class QueryJoinMetadata(GraphSerializable):
                  join_operator: str,
                  join_sql: str,
                  query_metadata: Optional[QueryMetadata] = None,
-                 yield_relation_nodes: bool = False
-                ):
+                 yield_relation_nodes: bool = False):
 
         # For full joins we don't want to duplicate joins if the other table
         # comes first in the join clause since it produces the same effect
@@ -105,7 +99,6 @@ class QueryJoinMetadata(GraphSerializable):
             join_sql = join_sql.replace(strip_val, '')
         return join_sql
 
-
     def create_next_node(self) -> Optional[GraphNode]:
         # return the string representation of the data
         try:
@@ -120,7 +113,7 @@ class QueryJoinMetadata(GraphSerializable):
             return None
 
     @staticmethod
-    def get_key(left_column_key, right_column_key, join_type, operator) -> str:
+    def get_key(left_column_key: str, right_column_key: str, join_type: str, operator: str) -> str:
         join_no_space = join_type.replace(' ', '-')
         return QueryJoinMetadata.KEY_FORMAT.format(left_column_key=left_column_key,
                                                    right_column_key=right_column_key,
@@ -133,7 +126,7 @@ class QueryJoinMetadata(GraphSerializable):
                                          join_type=self.join_type,
                                          operator=self.join_operator)
 
-    def get_query_relations(self) -> List[GraphRelationship]:
+    def get_query_relations(self) -> Iterator[GraphRelationship]:
 
         # Left Column
         yield GraphRelationship(
@@ -216,7 +209,6 @@ class QueryJoinMetadata(GraphSerializable):
             if self.query_metadata:
                 for query_item in self.query_metadata._create_next_node():
                     yield query_item
-
 
     def _create_relation_iterator(self) -> Iterator[GraphRelationship]:
         relations = self.get_query_relations()

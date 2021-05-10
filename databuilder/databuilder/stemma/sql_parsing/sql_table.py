@@ -1,4 +1,7 @@
 
+from typing import List
+
+
 class SqlTable(object):
     """
     Simple object holder for a table. Receives a table reference, which may look like
@@ -14,12 +17,12 @@ class SqlTable(object):
         self.table_reference = table_reference
         self.default_cluster = default_cluster
         self.default_schema = default_schema
-        self.columns = []
+        self.columns: List[str] = []
 
         # TableMetadata attributes
-        self.cluster = None
-        self.schema = None
-        self.table = None
+        self.cluster: str = default_cluster
+        self.schema: str = default_schema
+        self.table: str = table_reference
         self._set_values()
 
     def _set_values(self) -> None:
@@ -43,5 +46,5 @@ class SqlTable(object):
             self.table = tbl_ref_split[2]
 
     @property
-    def table_id(self):
+    def table_id(self) -> str:
         return f'{self.cluster}.{self.schema}.{self.table}'

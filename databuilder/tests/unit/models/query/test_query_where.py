@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import unittest
-from unittest.mock import ANY
 
 from databuilder.models.graph_serializable import (
     RELATION_END_KEY, RELATION_END_LABEL, RELATION_REVERSE_TYPE, RELATION_START_KEY, RELATION_START_LABEL,
@@ -11,16 +10,17 @@ from databuilder.models.graph_serializable import (
 from databuilder.models.query.query import QueryMetadata
 from databuilder.models.query.query_where import QueryWhereMetadata
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
-from databuilder.models.user import User
-from databuilder.stemma.sql_parsing.sql_table import SqlTable
-
 from databuilder.serializers import neo4_serializer
+from databuilder.stemma.sql_parsing.sql_table import SqlTable
+from databuilder.stemma.sql_parsing.sql_where import WhereAlias
 
 
 class TestQueryWhere(unittest.TestCase):
 
     def setUp(self) -> None:
         super(TestQueryWhere, self).setUp()
+        # Display full diffs
+        self.maxDiff = None
         self.table_metadata = TableMetadata(
             'hive',
             'gold',
@@ -28,21 +28,20 @@ class TestQueryWhere(unittest.TestCase):
             'test_table1',
             'test_table1',
             [
-                ColumnMetadata('field', None, None, 0),
+                ColumnMetadata('field', '', '', 0),
             ]
         )
         self.query_metadata = QueryMetadata(sql="select * from table a where a.field > 3",
                                             tables=[self.table_metadata])
 
-        self.query_where_metadata = QueryWhereMetadata(
-            tables=[self.table_metadata],
-            where_clause='a.field > 3',
-            left_arg='field',
-            right_arg='3',
-            operator='>',
-            query_metadata=self.query_metadata,
-            alias_mapping={'a': {'alias': 'a', 'table': SqlTable('tbl', 'schema', 'cluster')}}
-        )
+        _aliases = {'a': WhereAlias(alias='a', table=SqlTable('tbl', 'schema', 'cluster'))}
+        self.query_where_metadata = QueryWhereMetadata(tables=[self.table_metadata],
+                                                       where_clause='a.field > 3',
+                                                       left_arg='field',
+                                                       right_arg='3',
+                                                       operator='>',
+                                                       query_metadata=self.query_metadata,
+                                                       alias_mapping=_aliases)
         self._expected_key_hash = '795a2a16184c09b88ae518cd5230cfb5-0db8c6650b77c7ae1a5dedb549a76cfb'
 
     def test_get_model_key(self) -> None:
@@ -85,7 +84,6 @@ class TestQueryWhere(unittest.TestCase):
             actual.append(serialized_relation)
             relation = self.query_where_metadata.create_next_relation()
 
-        self.maxDiff = None
         expected_relations = [
             {
                 RELATION_START_KEY: 'hive://gold.test_schema1/test_table1/field',
@@ -105,4 +103,3 @@ class TestQueryWhere(unittest.TestCase):
             }
         ]
         self.assertEquals(expected_relations, actual)
-
