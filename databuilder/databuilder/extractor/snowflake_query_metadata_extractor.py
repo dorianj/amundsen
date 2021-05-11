@@ -3,6 +3,7 @@
 
 import datetime as dt
 import logging
+import pytz
 from typing import (
     Dict, Iterator, List, Union,
 )
@@ -91,7 +92,9 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     # Host for the SQL Parser REST API
     SQL_PARSER_HOST = 'sql_parser_host'
 
-    _defualt_dt = dt.datetime(2021, 5, 1, 0, 0, 0)
+    utc_tz = pytz.timezone("UTC")
+    _defualt_dt = utc_tz.localize(dt.datetime(2021, 5, 1, 3, 0, 0))
+
     DEFAULT_CONFIG = ConfigFactory.from_dict({
         DATABASE_KEY: 'snowflake',
         SNOWFLAKE_DATABASE_KEY: 'prod',

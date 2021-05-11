@@ -56,8 +56,8 @@ import {
   Lineage,
 } from 'interfaces';
 
-import CommonFilters from './CommonFilters'
-import CommonJoins from './CommonJoins'
+import CommonFilters from './CommonFilters';
+import CommonJoins from './CommonJoins';
 import DataPreviewButton from './DataPreviewButton';
 import ExploreButton from './ExploreButton';
 import FrequentUsers from './FrequentUsers';
@@ -474,7 +474,7 @@ export class TableDetail extends React.Component<
                   <div className="section-title">
                     {Constants.COMMON_JOINS_TITLE}
                   </div>
-                  <CommonJoins common_joins={data.common_joins} />
+                  <CommonJoins commonJoins={data.common_joins} />
                 </section>
               )}
               {!!data.common_filters.length && (
@@ -482,7 +482,10 @@ export class TableDetail extends React.Component<
                   <div className="section-title">
                     {Constants.COMMON_FILTERS_TITLE}
                   </div>
-                  <CommonFilters common_filters={data.common_filters} this_table={data.name} />
+                  <CommonFilters
+                    commonFilters={data.common_filters}
+                    thisTable={data.name}
+                  />
                 </section>
               )}
               {this.renderProgrammaticDesc(

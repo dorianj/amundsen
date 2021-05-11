@@ -40,7 +40,7 @@ export interface SimpleTableRef {
   schema_description: string;
 }
 
-export interface TableCommonJoin{
+export interface TableCommonJoin {
   column: string;
   joined_on_table: SimpleTableRef;
   joined_on_column: string;
@@ -48,12 +48,12 @@ export interface TableCommonJoin{
   join_type: string;
 }
 
-export interface AliasMapping{
+export interface AliasMapping {
   alias: string;
   table: SimpleTableRef;
 }
 
-export interface TableCommonFilter{
+export interface TableCommonFilter {
   where_clause: string;
   alias_mapping: AliasMapping[];
 }

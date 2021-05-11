@@ -6,9 +6,6 @@ export function getTableUrl(
   database: string,
   schema: string,
   tableName: string
-  ): string {
-
-  return (
-    `/table_detail/${cluster}/${database}/${schema}/${tableName}`
-  );
+): string {
+  return `/table_detail/${cluster}/${database}/${schema}/${tableName}`;
 }

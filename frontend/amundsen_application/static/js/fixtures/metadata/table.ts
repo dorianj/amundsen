@@ -102,7 +102,8 @@ export const tableMetadata: TableMetadata = {
   common_joins: [
     {
       column: 'date',
-      join_sql: 'ca_covid.open_data.statewide_testing a join ca_covid.open_data.statewide_cases b on a.date = b.date',
+      join_sql:
+        'ca_covid.open_data.statewide_testing a join ca_covid.open_data.statewide_cases b on a.date = b.date',
       join_type: 'inner join',
       joined_on_table: {
         database: 'database',
@@ -116,7 +117,8 @@ export const tableMetadata: TableMetadata = {
     },
     {
       column: 'user_id',
-      join_sql: 'this.table left outer join another.table c on c.user_id = this.table.user_id',
+      join_sql:
+        'this.table left outer join another.table c on c.user_id = this.table.user_id',
       join_type: 'left outer join',
       joined_on_table: {
         database: 'database',
@@ -127,7 +129,7 @@ export const tableMetadata: TableMetadata = {
         schema_description: 'desc2',
       },
       joined_on_column: 'data',
-    }
+    },
   ],
   common_filters: [
     {
@@ -141,11 +143,11 @@ export const tableMetadata: TableMetadata = {
             schema: 'schema',
             name: 'table',
             description: 'desc',
-            schema_description: 'desc2'
-          }
-        }
-      ]
-    }
+            schema_description: 'desc2',
+          },
+        },
+      ],
+    },
   ],
   database: 'hive',
   description:

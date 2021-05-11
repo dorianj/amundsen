@@ -121,7 +121,7 @@ class TestSnowflakeQueryMetadataExtractor(unittest.TestCase):
                 # Query Execution
                 actual_execution = extractor.extract()
                 expected_execution = QueryExecutionsMetadata(expected_query,
-                                                             start_time=1619841600000,
+                                                             start_time=1619852400000,
                                                              execution_count=1)
                 self.assertEqual(actual_execution.__repr__(), expected_execution.__repr__())
 
@@ -211,6 +211,6 @@ class TestSnowflakeQueryMetadataExtractor(unittest.TestCase):
                 # Query Execution
                 actual_execution = extractor.extract()
                 expected_execution = QueryExecutionsMetadata(expected_query,
-                                                             start_time=1619841600000,
+                                                             start_time=1619852400000,
                                                              execution_count=1)
                 self.assertEqual(actual_execution.__repr__(), expected_execution.__repr__())

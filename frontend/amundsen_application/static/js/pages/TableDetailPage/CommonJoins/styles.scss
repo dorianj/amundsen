@@ -25,12 +25,11 @@ $common-joins-max-width: 600px;
       padding-left: 6px;
       padding-right: 12px;
 
-        .join-key {
-          color: hsl(0, 0%, 20%);
-          font-weight: 600;
-        }
+      .join-key {
+        color: hsl(0, 0%, 20%);
+        font-weight: 600;
+      }
     }
-
 
     .join-table-value {
       padding-right: 6px;
@@ -40,9 +39,6 @@ $common-joins-max-width: 600px;
         line-height: 2rem;
       }
     }
-
-
-
   }
 }
 
