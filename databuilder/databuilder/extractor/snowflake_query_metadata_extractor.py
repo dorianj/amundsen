@@ -94,7 +94,6 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     # Host for the SQL Parser REST API
     SQL_PARSER_HOST = 'sql_parser_host'
 
-
     _defualt_dt = utc_tz.localize(dt.datetime(2021, 5, 1, 3, 0, 0))
 
     DEFAULT_CONFIG = ConfigFactory.from_dict({
