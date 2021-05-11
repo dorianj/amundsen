@@ -4,9 +4,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import * as ConfigUtils from 'config/config-utils';
-
-import { logClick } from 'utils/analytics';
 import CommonJoins, { CommonJoinsProps } from '.';
 
 describe('CommonJoins', () => {
@@ -44,10 +41,11 @@ describe('CommonJoins', () => {
           joined_on_column: 'data',
         },
       ],
-      thisTable: 'this_table',
       ...propOverrides,
     };
-    const wrapper = shallow<typeof CommonJoins>(<CommonJoins {...props} />);
+    const wrapper = shallow<typeof CommonJoins>(
+      <CommonJoins commonJoins={props.commonJoins} />
+    );
 
     return { props, wrapper };
   };

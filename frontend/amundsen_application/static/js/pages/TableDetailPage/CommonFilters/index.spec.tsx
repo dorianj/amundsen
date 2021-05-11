@@ -4,10 +4,6 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
 
-import * as ConfigUtils from 'config/config-utils';
-import { TableCommonFilter } from 'interfaces/TableMetadata';
-
-import { logClick } from 'utils/analytics';
 import CommonFilters, { CommonFiltersProps } from '.';
 
 describe('CommonFilters', () => {
@@ -34,7 +30,12 @@ describe('CommonFilters', () => {
       thisTable: 'this_table',
       ...propOverrides,
     };
-    const wrapper = mount<typeof CommonFilters>(<CommonFilters {...props} />);
+    const wrapper = mount<typeof CommonFilters>(
+      <CommonFilters
+        commonFilters={props.commonFilters}
+        thisTable={props.thisTable}
+      />
+    );
 
     return { props, wrapper };
   };

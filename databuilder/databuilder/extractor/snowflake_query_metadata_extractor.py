@@ -25,6 +25,8 @@ from databuilder.stemma.sql_parsing.sql_where import WhereClause
 
 LOGGER = logging.getLogger(__name__)
 
+utc_tz = pytz.timezone("UTC")
+
 
 class InvalidSnowflakeTimestamp(Exception):
     pass
@@ -92,7 +94,7 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     # Host for the SQL Parser REST API
     SQL_PARSER_HOST = 'sql_parser_host'
 
-    utc_tz = pytz.timezone("UTC")
+
     _defualt_dt = utc_tz.localize(dt.datetime(2021, 5, 1, 3, 0, 0))
 
     DEFAULT_CONFIG = ConfigFactory.from_dict({
@@ -157,7 +159,7 @@ class SnowflakeQueryMetadataExtractor(Extractor):
     def _try_load_timestamp(self, ts: str) -> dt.datetime:
         for ts_fmt in SnowflakeQueryMetadataExtractor.VALID_TS_FORMATS:
             try:
-                return dt.datetime.strptime(ts, ts_fmt)
+                return utc_tz.localize(dt.datetime.strptime(ts, ts_fmt))
             except ValueError as ve:
                 pass
 

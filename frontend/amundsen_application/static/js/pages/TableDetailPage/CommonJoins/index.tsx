@@ -99,7 +99,7 @@ const CommonJoins: React.FC<CommonJoinsProps> = ({ commonJoins }) => {
 
   return (
     <div className="common-joins-table">
-      {commonJoins.map((join, index) => {
+      {commonJoins.map((join) => {
         return (
           <CommonJoinRow
             key={join.joined_on_column}

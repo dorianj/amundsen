@@ -83,7 +83,7 @@ const CommonFilters: React.FC<CommonFiltersProps> = ({
 
   return (
     <div className="common-filter-table">
-      {commonFilters.map((where, index) => {
+      {commonFilters.map((where) => {
         return (
           <CommonFilterRow
             key={where.where_clause}
