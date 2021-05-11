@@ -4,7 +4,7 @@
 import hashlib
 import textwrap
 from typing import (
-    Dict, Iterator, List, Optional
+    Dict, Iterator, List, Optional,
 )
 
 from databuilder.models.graph_node import GraphNode

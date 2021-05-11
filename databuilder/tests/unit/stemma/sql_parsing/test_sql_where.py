@@ -8,7 +8,6 @@ from databuilder.stemma.sql_parsing.sql_where import WhereClause
 
 from . import DEFAULT_DATABASE, DEFAULT_SCHEMA
 
-
 DEFAULT_ALIASES = {
     'a': 'ca_covid.open_data.statewide_testing',
     'b': 'ca_covid.open_data.statewide_cases'

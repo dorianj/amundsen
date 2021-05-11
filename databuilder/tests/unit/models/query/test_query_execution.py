@@ -10,7 +10,6 @@ from databuilder.models.graph_serializable import (
 from databuilder.models.query.query import QueryMetadata
 from databuilder.models.query.query_execution import QueryExecutionsMetadata
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
-
 from databuilder.serializers import neo4_serializer
 
 

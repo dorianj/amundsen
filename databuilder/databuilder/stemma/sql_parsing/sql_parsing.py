@@ -1,12 +1,14 @@
 import functools
+from typing import (
+    Any, Dict, List, Optional,
+)
+
 import requests as r
-from typing import Any, Dict, List, Optional
 
-from databuilder.stemma.sql_parsing.gsp_enums import GSPJoinType, GSP_JOIN_ENUM_STR_MAP
-from databuilder.stemma.sql_parsing.sql_table import SqlTable
+from databuilder.stemma.sql_parsing.gsp_enums import GSP_JOIN_ENUM_STR_MAP, GSPJoinType
 from databuilder.stemma.sql_parsing.sql_join import SqlJoin
+from databuilder.stemma.sql_parsing.sql_table import SqlTable
 from databuilder.stemma.sql_parsing.sql_where import WhereClause
-
 
 TABLE_COLUMNS_ENDPOINT = '/parse-tables-columns'
 JOINS_ENDPOINT = '/parse-joins'

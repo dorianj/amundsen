@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import (
-    Iterator, Optional, Union
+    Iterator, Optional, Union,
 )
 
 from databuilder.models.graph_node import GraphNode

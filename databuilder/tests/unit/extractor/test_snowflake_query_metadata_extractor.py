@@ -10,7 +10,9 @@ from pyhocon import ConfigFactory
 
 from databuilder.extractor.snowflake_query_metadata_extractor import SnowflakeQueryMetadataExtractor
 from databuilder.extractor.sql_alchemy_extractor import SQLAlchemyExtractor
-from databuilder.models.query import QueryMetadata, QueryExecutionsMetadata, QueryJoinMetadata, QueryWhereMetadata
+from databuilder.models.query import (
+    QueryExecutionsMetadata, QueryJoinMetadata, QueryMetadata, QueryWhereMetadata,
+)
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
 from databuilder.stemma.sql_parsing.sql_parsing import SqlParser
 

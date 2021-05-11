@@ -5,8 +5,8 @@ import unittest
 from unittest import mock
 from unittest.mock import MagicMock
 
-from databuilder.stemma.sql_parsing.sql_parsing import SqlParser
 from databuilder.stemma.sql_parsing.sql_join import SqlJoin
+from databuilder.stemma.sql_parsing.sql_parsing import SqlParser
 from databuilder.stemma.sql_parsing.sql_table import SqlTable
 from databuilder.stemma.sql_parsing.sql_where import WhereClause
 

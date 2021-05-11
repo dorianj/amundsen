@@ -3,25 +3,24 @@
 
 import datetime as dt
 import logging
-import pytz
 from typing import (
     Dict, Iterator, List, Union,
 )
 
+import pytz
 from pyhocon import ConfigFactory, ConfigTree
 
 from databuilder.extractor import sql_alchemy_extractor
 from databuilder.extractor.base_extractor import Extractor
 from databuilder.models.query import (
-    QueryExecutionsMetadata, QueryJoinMetadata, QueryMetadata, QueryWhereMetadata
+    QueryExecutionsMetadata, QueryJoinMetadata, QueryMetadata, QueryWhereMetadata,
 )
 from databuilder.models.table_metadata import ColumnMetadata, TableMetadata
 from databuilder.models.user import User as UserMetadata
+from databuilder.stemma.sql_parsing.sql_join import SqlJoin
 from databuilder.stemma.sql_parsing.sql_parsing import SqlParser
 from databuilder.stemma.sql_parsing.sql_table import SqlTable
-from databuilder.stemma.sql_parsing.sql_join import SqlJoin
 from databuilder.stemma.sql_parsing.sql_where import WhereClause
-
 
 LOGGER = logging.getLogger(__name__)
 
