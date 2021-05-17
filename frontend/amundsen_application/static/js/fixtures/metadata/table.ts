@@ -225,6 +225,9 @@ export const tableMetadata: TableMetadata = {
 export const emptyTableLineage: Lineage = {
   downstream_entities: [],
   upstream_entities: [],
+  key: 'database://cluster.schema/table_name',
+  depth: 1,
+  direction: 'both',
 };
 
 export const tableLineage: Lineage = {
@@ -238,6 +241,7 @@ export const tableLineage: Lineage = {
       name: 'table_name',
       schema: 'schema',
       usage: 1398,
+      parent: 'database://cluster.schema/parent_table_name',
     },
   ],
   upstream_entities: [
@@ -250,8 +254,12 @@ export const tableLineage: Lineage = {
       name: 'table_name',
       schema: 'schema',
       usage: 1398,
+      parent: 'database://cluster.schema/parent_table_name',
     },
   ],
+  key: 'database://cluster.schema/table_name',
+  depth: 1,
+  direction: 'both',
 };
 
 export const relatedDashboards: DashboardResource[] = [

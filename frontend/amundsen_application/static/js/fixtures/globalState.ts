@@ -180,18 +180,10 @@ const globalState: GlobalState = {
       common_joins: [],
       common_filters: [],
     },
-    tableLineage: {
-      lineage: {
-        upstream_entities: [],
-        downstream_entities: [],
-      },
-      status: null,
-    },
     tableOwners: {
       isLoading: true,
       owners: {},
     },
-    columnLineageMap: {},
   },
   lastIndexed: { lastIndexed: 1555632106 },
   tags: {
@@ -267,6 +259,18 @@ const globalState: GlobalState = {
     },
   },
   ui: {},
+  lineage: {
+    lineageTree: {
+      upstream_entities: [],
+      downstream_entities: [],
+      key: '',
+      direction: 'both',
+      depth: 1,
+    },
+    statusCode: null,
+    isLoading: false,
+    columnLineageMap: {},
+  },
 };
 
 export default globalState;
