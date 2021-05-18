@@ -5,11 +5,11 @@
 
 // TODO - consider using more descriptive names, or replacing with more specific variables.
 // Colors
-$brand-color-1: $indigo10 !default;
-$brand-color-2: $indigo20 !default;
-$brand-color-3: $indigo40 !default;
-$brand-color-4: $indigo60 !default;
-$brand-color-5: $indigo80 !default;
+$brand-color-1: #ffffff !default;
+$brand-color-2: #ff6a5b !default;
+$brand-color-3: #0a1930 !default;
+$brand-color-4: #3898ff !default;
+$brand-color-5: #dfe2e8 !default;
 
 $brand-primary: $brand-color-4 !default;
 
@@ -94,7 +94,7 @@ $icon-bg-disabled: $gray20 !default;
 $red-triangle-warning: $sunset60;
 
 // Header, Body, & Footer
-$nav-bar-color: $indigo100;
+$nav-bar-color: $brand-color-4;
 $nav-bar-height: 60px;
 $body-min-width: 1048px;
 $footer-height: 60px;
