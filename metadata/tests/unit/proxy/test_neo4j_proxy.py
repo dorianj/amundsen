@@ -29,6 +29,7 @@ from metadata_service.util import UserResourceRel
 class TestNeo4jProxy(unittest.TestCase):
 
     def setUp(self) -> None:
+        self.maxDiff = None
         self.app = create_app(config_module_class='metadata_service.config.LocalConfig')
         self.app_context = self.app.app_context()
         self.app_context.push()
