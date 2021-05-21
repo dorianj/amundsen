@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: pip3 install -r requirements.txt && pip3 install . && pip3 install codecov && pip3 install ../common --upgrade
+        run: pip3 install -r requirements.txt && pip3 install . && pip3 install codecov
         working-directory: ./search
       - name: Run python unit tests
         run: make test

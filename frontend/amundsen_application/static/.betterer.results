@@ -505,10 +505,10 @@ exports[`eslint`] = {
     "js/components/Tags/index.tsx:3468508233": [
       [38, 4, 21, "Must use destructuring props assignment", "4236634811"]
     ],
-    "js/config/config-default.ts:3267988770": [
+    "js/config/config-default.ts:1497564975": [
       [2, 0, 72, "\`../interfaces\` import should occur before import of \`./config-types\`", "1449508543"],
-      [240, 6, 21, "\'partitionKey\' is defined but never used.", "399589312"],
-      [241, 6, 23, "\'partitionValue\' is defined but never used.", "793372348"]
+      [236, 6, 21, "\'partitionKey\' is defined but never used.", "399589312"],
+      [237, 6, 23, "\'partitionValue\' is defined but never used.", "793372348"]
     ],
     "js/config/config-utils.ts:2658622130": [
       [11, 0, 45, "\`../interfaces\` import should occur before import of \`./config-types\`", "3885176344"]
@@ -1036,11 +1036,11 @@ exports[`eslint`] = {
     "js/pages/TableDetailPage/index.spec.tsx:1320221888": [
       [64, 6, 25, "Use object destructuring.", "1230260048"]
     ],
-    "js/pages/TableDetailPage/index.tsx:3912243318": [
-      [137, 2, 20, "key should be placed after componentDidUpdate", "3916788587"],
-      [147, 22, 12, "\'getTableData\' is already declared in the upper scope.", "3938384029"],
-      [160, 22, 12, "\'getTableData\' is already declared in the upper scope.", "3938384029"],
-      [236, 6, 28, "\'openRequestDescriptionDialog\' is already declared in the upper scope.", "4102713454"]
+    "js/pages/TableDetailPage/index.tsx:2009672874": [
+      [135, 2, 20, "key should be placed after componentDidUpdate", "3916788587"],
+      [145, 22, 12, "\'getTableData\' is already declared in the upper scope.", "3938384029"],
+      [158, 22, 12, "\'getTableData\' is already declared in the upper scope.", "3938384029"],
+      [238, 6, 28, "\'openRequestDescriptionDialog\' is already declared in the upper scope.", "4102713454"]
     ],
     "js/utils/textUtils.ts:2545492889": [
       [19, 6, 46, "Unexpected lexical declaration in case block.", "156477898"]

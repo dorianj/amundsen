@@ -17,6 +17,7 @@ from amundsen_common.models.dashboard import DashboardSummary
 from amundsen_common.models.feature import Feature
 from amundsen_common.models.lineage import Lineage
 from amundsen_common.models.popular_table import PopularTable
+from amundsen_common.models.query import Query
 from amundsen_common.models.table import (Application, Column,
                                           ProgrammaticDescription, Reader,
                                           Source, Stat, Table, Tag, Watermark)
@@ -1743,6 +1744,34 @@ class AbstractGremlinProxy(BaseProxy):
         pass
 
     def get_feature(self, *, feature_uri: str) -> Feature:
+        pass
+
+    def get_resource_description(self, *,
+                                 resource_type: ResourceType,
+                                 uri: str) -> Description:
+        pass
+
+    def put_resource_description(self, *,
+                                 resource_type: ResourceType,
+                                 uri: str,
+                                 description: str) -> None:
+        pass
+
+    def add_resource_owner(self, *,
+                           uri: str,
+                           resource_type: ResourceType,
+                           owner: str) -> None:
+        pass
+
+    def delete_resource_owner(self, *,
+                              uri: str,
+                              resource_type: ResourceType,
+                              owner: str) -> None:
+        pass
+
+    def get_resource_generation_code(self, *,
+                                     uri: str,
+                                     resource_type: ResourceType) -> Query:
         pass
 
 
