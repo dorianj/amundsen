@@ -2,3 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // This file is intentionally left blank and should be used to add new custom variables or overwrite defaults from _variables-default.scss
+
+$brand-color-1: #ffffff;
+$brand-color-2: #ff6a5b;
+$brand-color-3: #0a1930;
+$brand-color-4: #3898ff;
+$brand-color-5: #dfe2e8;
+
+$link-color: $brand-color-4;
+$link-hover-color: $brand-color-5;
+
+$btn-primary-bg: $brand-color-4;
+$btn-primary-bg-hover: $brand-color-5;
+$icon-bg-brand: $brand-color-3;
+
+$label-primary-bg: $brand-color-3;
+$nav-bar-color: $brand-color-4;
+
