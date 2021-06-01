@@ -1,6 +1,3 @@
-# Always use the latest common
--e ../common
-
 # Stemma Specific Requirements
 
 # Slack Integrations
