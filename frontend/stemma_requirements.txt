@@ -1,0 +1,11 @@
+# Always use the latest common
+-e ../common
+
+# Stemma Specific Requirements
+
+# Slack Integrations
+slack_sdk==3.5.1
+slackeventsapi==2.2.1
+
+# To Cache the Responses
+beaker>=1.11.0

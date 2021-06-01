@@ -39,12 +39,14 @@ const setup = (
     location
   );
   const props = {
+    slackConversations: [],
     tableLineage,
     isLoading: false,
     isLoadingDashboards: false,
     numRelatedDashboards: 0,
     statusCode: 200,
     tableData: tableMetadata,
+    getSlackConversationsDispatch: jest.fn(),
     getTableData: jest.fn(),
     getTableLineageDispatch: jest.fn(),
     openRequestDescriptionDialog: jest.fn(),

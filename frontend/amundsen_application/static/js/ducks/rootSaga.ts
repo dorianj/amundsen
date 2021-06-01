@@ -1,5 +1,7 @@
 import { all } from 'redux-saga/effects';
 
+// STEMMA SAGAS
+
 // AnnouncementPage
 
 import {
@@ -11,6 +13,7 @@ import {
 
 // Dashboard
 import { getDashboardWatcher } from 'ducks/dashboard/sagas';
+import { getSlackConversationsWatcher } from './stemma/slack/sagas';
 import { getAnnouncementsWatcher } from './announcements/sagas';
 
 // Notifications
@@ -73,6 +76,9 @@ import {
 
 export default function* rootSaga() {
   yield all([
+    //  STEMMA SAGAS
+    getSlackConversationsWatcher(),
+
     // AnnouncementPage
     getAnnouncementsWatcher(),
     // Bookmarks

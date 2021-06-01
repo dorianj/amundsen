@@ -19,3 +19,6 @@ export enum TABLE_TAB {
   DOWNSTREAM = 'downstream',
   UPSTREAM = 'upstream',
 }
+
+// STEMMA CONSTANTS
+export const SLACK_CONVERSATIONS = 'Slack Conversations';

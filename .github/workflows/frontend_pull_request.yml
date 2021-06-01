@@ -17,10 +17,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: pip3 install -r requirements.txt && pip3 install .[all] && pip3 install codecov && pip3 install ../common --upgrade
+        run: sed -E -i 's/amundsen-common==(.+)//' requirements.txt && pip3 install ../common && pip3 install -r requirements.txt && pip3 install .[all] && pip3 install codecov && pip install -r stemma_requirements.txt
         working-directory: ./frontend
       - name: Run python unit tests
-        run: PYTHONPATH=../common make test
+        run: make test
         working-directory: ./frontend
   test-unit-frontend:
     runs-on: ubuntu-latest

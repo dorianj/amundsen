@@ -1,0 +1,13 @@
+// Copyright Contributors to the Amundsen project.
+// SPDX-License-Identifier: Apache-2.0
+
+@import 'variables';
+
+.slack-conversation-item {
+  .slack-conversation {
+  }
+
+  .channel-name {
+    float: right;
+  }
+}

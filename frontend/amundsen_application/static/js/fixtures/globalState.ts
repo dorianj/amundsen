@@ -9,6 +9,13 @@ import { defaultEmptyFilters } from './search/filters';
 import { dashboardMetadata } from './metadata/dashboard';
 
 const globalState: GlobalState = {
+  // STEMMA STATE
+  slackConversations: {
+    isLoading: false,
+    statusCode: 200,
+    conversations: [],
+  },
+  // AMUNDSEN OSS STATE
   announcements: {
     isLoading: false,
     statusCode: 200,

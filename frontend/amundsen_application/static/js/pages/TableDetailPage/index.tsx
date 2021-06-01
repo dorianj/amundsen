@@ -9,6 +9,11 @@ import { bindActionCreators } from 'redux';
 import { RouteComponentProps } from 'react-router';
 
 import { GlobalState } from 'ducks/rootReducer';
+// STEMMA IMPORTS
+import { getSlackConversations } from 'ducks/stemma/slack/reducer';
+import { GetSlackConversationsRequest } from 'ducks/stemma/slack/types';
+
+// AMUNDSEN OSS IMPORTS
 import { getTableData } from 'ducks/tableMetadata/reducer';
 import { getTableLineage } from 'ducks/lineage/reducer';
 import { openRequestDescriptionDialog } from 'ducks/notification/reducer';
@@ -47,6 +52,9 @@ import { formatDateTimeShort } from 'utils/dateUtils';
 import { getLoggingParams } from 'utils/logUtils';
 
 import {
+  // STEMMA INTERFACES
+  SlackConversation,
+  // AMUNDSEN OSS INTERFACES
   ProgrammaticDescription,
   ResourceType,
   TableMetadata,
@@ -54,7 +62,9 @@ import {
   SortCriteria,
   Lineage,
 } from 'interfaces';
-
+// STEMMA IMPORT
+import SlackConversationList from './SlackConversationList';
+// AMUNDSEN OSS IMPORTS
 import CommonFilters from './CommonFilters';
 import CommonJoins from './CommonJoins';
 import DataPreviewButton from './DataPreviewButton';
@@ -87,6 +97,9 @@ const SORT_CRITERIAS = {
 };
 
 export interface PropsFromState {
+  // STEMMA STATE INTERFACE
+  slackConversations: SlackConversation[];
+  // AMUNDSEN OSS STATE INTERFACE
   isLoading: boolean;
   isLoadingDashboards: boolean;
   numRelatedDashboards: number;
@@ -95,6 +108,11 @@ export interface PropsFromState {
   tableLineage: Lineage;
 }
 export interface DispatchFromProps {
+  // STEMMA DISPATCH INTERFACE
+  getSlackConversationsDispatch: (
+    resourceKey: string
+  ) => GetSlackConversationsRequest;
+  // AMUNDSEN OSS DISPATCH INTERFACE
   getTableData: (
     key: string,
     searchIndex?: string,
@@ -150,6 +168,11 @@ export class TableDetail extends React.Component<
 
     this.key = this.getTableKey();
     getTableData(this.key, index, source);
+
+    // STEMMA PROCESS
+    const { getSlackConversationsDispatch } = this.props;
+    getSlackConversationsDispatch(this.key);
+    // AMUNDSEN OSS PROCESS
 
     if (isTableListLineageEnabled()) {
       getTableLineageDispatch(this.key);
@@ -229,6 +252,9 @@ export class TableDetail extends React.Component<
   };
 
   renderTabs(editText, editUrl) {
+    // STEMMA PROCESS
+    const { slackConversations } = this.props;
+    // AMUNDSEN OSS PROCESS
     const tabInfo: TabInfo[] = [];
     const {
       isLoadingDashboards,
@@ -302,6 +328,14 @@ export class TableDetail extends React.Component<
           title: `Downstream (${tableLineage.downstream_entities.length})`,
         });
       }
+    }
+
+    if (slackConversations.length) {
+      tabInfo.push({
+        content: <SlackConversationList conversations={slackConversations} />,
+        key: Constants.SLACK_CONVERSATIONS,
+        title: `Slack Conversations (${slackConversations.length})`,
+      });
     }
 
     return (
@@ -526,6 +560,9 @@ export class TableDetail extends React.Component<
 }
 
 export const mapStateToProps = (state: GlobalState) => ({
+  // STEMMA STATE PROPS
+  slackConversations: state.slackConversations.conversations,
+  // AMUNDSEN OSS STATE PROPS
   isLoading: state.tableMetadata.isLoading,
   statusCode: state.tableMetadata.statusCode,
   tableData: state.tableMetadata.tableData,
@@ -541,6 +578,9 @@ export const mapStateToProps = (state: GlobalState) => ({
 export const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
+      // STEMMA DISPATCH
+      getSlackConversationsDispatch: getSlackConversations,
+      // AMUNDSEN OSS DISPATCH
       getTableData,
       getTableLineageDispatch: getTableLineage,
       openRequestDescriptionDialog,

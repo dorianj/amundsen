@@ -3,6 +3,10 @@
 
 import { combineReducers } from 'redux';
 
+import slackConversations, {
+  SlackConversationsReducerState,
+} from 'ducks/stemma/slack/reducer';
+
 import dashboard, { DashboardReducerState } from 'ducks/dashboard/reducer';
 import announcements, { AnnouncementsReducerState } from './announcements';
 import feedback, { FeedbackReducerState } from './feedback/reducer';
@@ -23,6 +27,9 @@ import issue, { IssueReducerState } from './issue/reducer';
 import lineage, { LineageReducerState } from './lineage/reducer';
 
 export interface GlobalState {
+  // STEMMA STATE
+  slackConversations: SlackConversationsReducerState;
+  // AMUNDSEN OSS STATE
   announcements: AnnouncementsReducerState;
   bookmarks: BookmarkReducerState;
   dashboard: DashboardReducerState;
@@ -40,6 +47,9 @@ export interface GlobalState {
 }
 
 const rootReducer = combineReducers<GlobalState>({
+  // STEMMA REDUCER
+  slackConversations,
+  // AMUNDSEN OSS REDUCER
   announcements,
   bookmarks,
   dashboard,

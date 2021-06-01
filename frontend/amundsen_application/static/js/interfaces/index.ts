@@ -1,3 +1,6 @@
+// STEMMA EXPORTS
+export * from './Stemma/Slack';
+// AMUNDSEN OSS EXPORTS
 export * from './Analytics';
 export * from './Announcements';
 export * from './Badges';
