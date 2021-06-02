@@ -17,9 +17,11 @@ from slackeventsapi import SlackEventAdapter
 
 from amundsen_application.api.utils.request_utils import request_metadata, get_query_param
 
+from amundsen_common.utils.hmac_utils import generate_token
+
 slack_blueprint = Blueprint('slack', __name__, url_prefix=SLACK_BASE_ENDPOINT)
-slack_events_adapter = SlackEventAdapter(os.environ.get('SLACK_SIGNING_SECRET'),
-                                         SLACK_EVENTS_ENDPOINT, app)
+SLACK_SIGNING_SECRET = os.environ.get('SLACK_SIGNING_SECRET')
+slack_events_adapter = SlackEventAdapter(SLACK_SIGNING_SECRET, SLACK_EVENTS_ENDPOINT, app)
 LOGGER = logging.getLogger(__name__)
 
 
@@ -61,7 +63,7 @@ def app_mention_event(data: dict) -> None:
             response = responses.success(request, key)
 
         else:
-            response = responses.failure(initial_text, text)
+            response = responses.failure()
     _response_text = f'This is what you sent: `{initial_text}`'
     return client.post_message_to_slack(channel, response, _response_text, thread)
 
@@ -77,12 +79,14 @@ def get_custom_reply_key(message: str) -> str:
 
 def add_slack_thread(message: dict, table_name: str) -> Tuple:
     try:
-        url = f'{app.config["METADATASERVICE_BASE"]}/stemma/slack/link'
+
         data = client.retrieve_message_details(
             message['thread_ts'],
             message["channel"]
         )
         data.update({'table_name': table_name})
+        token = generate_token(SLACK_SIGNING_SECRET, data)
+        url = f'{app.config["METADATASERVICE_BASE"]}/stemma/slack/link?token={token}'
         response = request_metadata(url=url, method='PUT', data=json.dumps(data))
         status_code = response.status_code
         response_data = response.json()

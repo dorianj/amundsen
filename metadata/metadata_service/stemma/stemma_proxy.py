@@ -30,7 +30,7 @@ class StemmaProxy(Neo4jProxy):
         MERGE (u:SlackThread {key: $key})
         on CREATE SET u={key: $key, channel: $channel, author: $author, channel_id: $channel_id,
         team: $team, text: $text, thread_ts: $thread_ts, ts: $ts, type: $type}
-        on MATCH SET u={key: $message_key, channel: $channel, author: $author, channel_id: $channel_id,
+        on MATCH SET u={key: $key, channel: $channel, author: $author, channel_id: $channel_id,
         team: $team, text: $text, thread_ts: $thread_ts, ts: $ts, type: $type}
         """)
 

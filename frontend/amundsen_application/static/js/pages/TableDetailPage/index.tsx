@@ -330,7 +330,7 @@ export class TableDetail extends React.Component<
       }
     }
 
-    if (slackConversations.length) {
+    if (slackConversations && slackConversations.length) {
       tabInfo.push({
         content: <SlackConversationList conversations={slackConversations} />,
         key: Constants.SLACK_CONVERSATIONS,

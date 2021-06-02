@@ -51,7 +51,7 @@ def success(request: Request, key: str) -> List:
     ]
 
 
-def failure(user_input: str, text: str) -> List:
+def failure() -> List:
     return [
         {
             "type": "section",
@@ -61,23 +61,10 @@ def failure(user_input: str, text: str) -> List:
             }
         },
         {
-            "type": "context",
-            "elements": [
-                {
-                    "type": "mrkdwn",
-                    "text": f'This is what you sent: `{user_input}`'
-                },
-                {
-                    "type": "mrkdwn",
-                    "text": f'This is what we processed: `{text}`',
-                }
-            ]
-        },
-        {
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": "'I could not add the thread to requested table. \n "
+                "text": "I could not add the thread to requested table. \n "
                         "Please make sure that you have entered the table name in correct format. "
                         "`@Stemma <schema_name>.<table_name>`"
             }
