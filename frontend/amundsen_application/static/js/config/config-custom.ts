@@ -20,6 +20,8 @@ const configCustom: AppConfigCustom = {
   indexUsers: {
     enabled: false,
   },
+  logoPath: '/static/images/icons/stemma.svg',
+  logoTitle: '',
   userIdLabel: 'email address',
   issueTracking: {
     enabled: false,
