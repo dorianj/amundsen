@@ -5,9 +5,8 @@ import os
 from amundsen_application import create_app
 
 
-# Uses the STEMMA Specific configurations
 if not os.getenv('FRONTEND_SVC_CONFIG_MODULE_CLASS'):
-    os.environ['FRONTEND_SVC_CONFIG_MODULE_CLASS'] = 'amundsen_application.stemma.config.StemmaConfig'
+    os.environ['FRONTEND_SVC_CONFIG_MODULE_CLASS'] = 'amundsen_application.config.TestConfig'
 
 application = create_app()
 

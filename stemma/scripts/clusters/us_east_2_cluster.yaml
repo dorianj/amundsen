@@ -1,0 +1,49 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: stemma-us-east-2
+  region: us-east-2
+  version: "1.19"
+
+managedNodeGroups:
+  - name: ng-stemma-eu-central-1
+    instanceType: t3.xlarge
+    minSize: 3
+    desiredCapacity: 4
+    maxSize: 4
+    availabilityZones: ["us-east-2a", "us-east-2b"]
+    volumeSize: 20
+    ssh:
+      allow: true
+      publicKeyName: stemma-us-east-2-key
+    iam:
+      withAddonPolicies:
+        externalDNS: true
+        certManager: true
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: aws-load-balancer-controller
+      namespace: kube-system
+    wellKnownPolicies:
+      awsLoadBalancerController: true
+  - metadata:
+      name: cluster-autoscaler
+      namespace: kube-system
+      labels: {aws-usage: "cluster-ops"}
+    attachPolicy: # inline policy can be defined along with `attachPolicyARNs`
+      Version: "2012-10-17"
+      Statement:
+      - Effect: Allow
+        Action:
+        - "autoscaling:DescribeAutoScalingGroups"
+        - "autoscaling:DescribeAutoScalingInstances"
+        - "autoscaling:DescribeLaunchConfigurations"
+        - "autoscaling:DescribeTags"
+        - "autoscaling:SetDesiredCapacity"
+        - "autoscaling:TerminateInstanceInAutoScalingGroup"
+        - "ec2:DescribeLaunchTemplateVersions"
+        Resource: '*'

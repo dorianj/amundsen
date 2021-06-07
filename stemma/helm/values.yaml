@@ -1,0 +1,187 @@
+# Default values for Amundsen Helm Chart
+# This is a YAML-formatted file.
+# Declare name/value pairs to be passed into your templates.
+name: amundsen
+
+replicaCount: 1
+restartPolicy: Always
+podAnnotations: {}
+imagePullSecrets: []
+nodeSelector: {}
+affinity: {}
+tolerations: []
+podSecurityContext: {}
+
+image:
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  repository: ""
+  tag: ""
+
+service:
+  type: NodePort
+
+extra:
+  vars: []
+  proxy: []
+  secrets: []
+
+flaskApp:
+  module: ""  # 'flaskoidc' if you want to enable OIDC
+  class: ""   # 'FlaskOIDC' if you want to enable OIDC
+
+oidc:
+#  If enabled, please make sure to fill in the fields under provider key below.
+  enabled: false
+  secretsPath: "/etc/client_secrets.json"
+  scopes: "openid,email,profile"
+  provider:
+    issuer:
+    auth_uri:
+    userinfo_uri:
+    token_uri:
+    token_introspection_uri:
+#  Google OIDC Details
+#  provider:
+#    issuer: https://accounts.google.com
+#    auth_uri: https://accounts.google.com/o/oauth2/v2/auth
+#    userinfo_uri: https://openidconnect.googleapis.com/v1/userinfo
+#    token_uri: https://oauth2.googleapis.com/token
+#    token_introspection_uri: https://oauth2.googleapis.com/tokeninfo
+
+
+frontend:
+  service:
+    name: "frontend"
+  port:
+    name: "amundsen-f"
+    value: 5000
+  baseURL: "http://localhost:5000"
+  image:
+    name: frontend
+    tag: latest
+  config:
+    class: ""
+  ingress:
+    enabled: false
+    host: discover.stemmastaging.com
+    tlsEnabled: false
+    labels: {}
+    annotations: {kubernetes.io/ingress.class: alb, alb.ingress.kubernetes.io/scheme: internet-facing, alb.ingress.kubernetes.io/target-type: instance}
+  oidc:
+    client:
+      id: ""
+      secret: ""
+  resources: {}
+  healthcheckURL: "/healthcheck"
+
+search:
+  service:
+    name: "search"
+  port:
+    name: "amundsen-s"
+    value: 5001
+  baseURL: "http://localhost:5001"
+  image:
+    name: search
+    tag: latest
+  ingress:
+    enabled: false
+    host: ""
+    tlsEnabled: false
+    labels: {}
+  oidc:
+    client:
+      id: ""
+      secret: ""
+  proxy:
+    endpoint:
+    user:
+    password:
+  resources: {}
+  healthcheckURL: "/healthcheck"
+
+metadata:
+  service:
+    name: "metadata"
+  port:
+    name: "amundsen-m"
+    value: 5002
+  baseURL: "http://localhost:5002"
+  image:
+    name: metadata
+    tag: latest
+  ingress:
+    enabled: false
+    host: ""
+    tlsEnabled: false
+    labels: {}
+  oidc:
+    client:
+      id: ""
+      secret: ""
+  proxy:
+    host:
+    port:
+    user:
+    password:
+  resources: {}
+  healthcheckURL: "/healthcheck"
+
+
+neo4j:
+  enabled: true
+  version: 3.3.0
+  resources: {}
+  config:
+    dbms:
+      heap_initial_size: 1G
+      heap_max_size: 2G
+      pagecache_size: 2G
+
+  persistence: {}
+  backup:
+    enabled: false
+    s3Path: "s3://dev/null"
+    schedule: "0 * * * *"
+    podAnnotations: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  annotations: {}
+  podAnnotations: {}
+
+
+## To add values to dependent charts, prefix the value with the chart name (e.g. elasticsearch)
+## By default, the ES chart runs with 3,3,2 nodes for master, data, client. Amundsen likely does not need so much,
+## so, this has been tuned down to 1,1,1.
+##
+elasticsearch:
+  enabled: true
+  cluster:
+    env:
+      ## elasticsearch.cluster.env.MINIMUM_MASTER_NODES -- required to match master.replicas
+      MINIMUM_MASTER_NODES: 1
+      ## elasticsearch.cluster.env.EXPECTED_MASTER_NODES -- required to match master.replicas
+      EXPECTED_MASTER_NODES: 1
+      ## elasticsearch.cluster.env.RECOVER_AFTER_MASTER_NODES -- required to match master.replicas
+      RECOVER_AFTER_MASTER_NODES: 1
+  master:
+    ## elasticsearch.master.replicas -- only running amundsen on 1 master replica
+    replicas: 1
+  data:
+    ## elasticsearch.data.replicas -- only running amundsen on 1 data replica
+    replicas: 1
+  client:
+    ## elasticsearch.client.replicas -- only running amundsen on 1 client replica
+    replicas: 1
+  #  serviceType: LoadBalancer
+  #  serviceAnnotations:
+  #    external-dns.alpha.kubernetes.io/hostname: amundsen-elasticsearch.dev.teamname.company.com
+  #    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+  #    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  #  nodeAffinity: high
+  #  resources:
+  #    limits:
+  #      cpu: 2
+  #      memory: 2Gi

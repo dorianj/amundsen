@@ -1,5 +1,7 @@
 # Stemma Specific Requirements
 
+flaskoidc==0.2.3
+
 # Slack Integrations
 slack_sdk==3.5.1
 slackeventsapi==2.2.1

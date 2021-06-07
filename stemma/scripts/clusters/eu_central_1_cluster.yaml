@@ -1,0 +1,50 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: prod-eu-central-1
+  region: eu-central-1
+  version: "1.19"
+
+managedNodeGroups:
+  - name: ng-prod-eu-central-1
+    instanceType: t3.xlarge
+    minSize: 3
+    desiredCapacity: 4
+    maxSize: 4
+    availabilityZones: ["eu-central-1a", "eu-central-1b"]
+    volumeSize: 20
+    ssh:
+      allow: true
+      publicKeyName: amundsen-key-pair
+    iam:
+      withAddonPolicies:
+        externalDNS: true
+        certManager: true
+
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: aws-load-balancer-controller
+
+      namespace: kube-system
+    wellKnownPolicies:
+      awsLoadBalancerController: true
+  - metadata:
+      name: cluster-autoscaler
+      namespace: kube-system
+      labels: {aws-usage: "cluster-ops"}
+    attachPolicy: # inline policy can be defined along with `attachPolicyARNs`
+      Version: "2012-10-17"
+      Statement:
+      - Effect: Allow
+        Action:
+        - "autoscaling:DescribeAutoScalingGroups"
+        - "autoscaling:DescribeAutoScalingInstances"
+        - "autoscaling:DescribeLaunchConfigurations"
+        - "autoscaling:DescribeTags"
+        - "autoscaling:SetDesiredCapacity"
+        - "autoscaling:TerminateInstanceInAutoScalingGroup"
+        - "ec2:DescribeLaunchTemplateVersions"
+        Resource: '*'

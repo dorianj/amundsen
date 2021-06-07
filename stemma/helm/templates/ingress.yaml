@@ -1,0 +1,105 @@
+{{- $ingress := .Values.frontend.ingress -}}
+{{- if $ingress.enabled }}
+---
+{{- $servicePort := .Values.frontend.port.value -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "amundsen.fullname" . }}-{{ .Values.frontend.service.name }}
+  labels:
+    component: amundsen
+    {{- include "amundsen.labels" . | nindent 4 }}
+{{- if $ingress.labels }}
+{{ toYaml $ingress.labels | indent 4 }}
+{{- end }}
+  annotations:
+    {{- range $key, $value := $ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ $ingress.host }}
+      http:
+        paths:
+          - pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "amundsen.fullname" . }}
+                port:
+                  number: {{ $servicePort }}
+  {{- if $ingress.tlsEnabled }}
+  tls:
+    - hosts:
+        - {{ tpl $ingress.host . }}
+  {{- end -}}
+{{- end -}}
+{{- $ingress := .Values.search.ingress -}}
+{{- if $ingress.enabled }}
+---
+{{- $servicePort := .Values.search.port.value -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "amundsen.fullname" . }}-search
+  labels:
+    {{- include "amundsen.labels" . | nindent 4 }}
+{{- if $ingress.labels }}
+{{ toYaml $ingress.labels | indent 4 }}
+{{- end }}
+  annotations:
+    {{- range $key, $value := $ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ $ingress.host }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: {{ include "amundsen.fullname" . }}
+                port:
+                  number: {{ $servicePort }}
+  {{- if $ingress.tlsEnabled }}
+  tls:
+    - hosts:
+        - {{ tpl $ingress.host . }}
+  {{- end -}}
+{{- end -}}
+{{- $ingress := .Values.metadata.ingress -}}
+{{- if $ingress.enabled }}
+---
+{{- $servicePort := .Values.metadata.port.value -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "amundsen.fullname" . }}-metadata
+  labels:
+    {{- include "amundsen.labels" . | nindent 4 }}
+{{- if $ingress.labels }}
+{{ toYaml $ingress.labels | indent 4 }}
+{{- end }}
+  annotations:
+    {{- range $key, $value := $ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ $ingress.host }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: {{ include "amundsen.fullname" . }}
+                port:
+                  number: {{ $servicePort }}
+  {{- if $ingress.tlsEnabled }}
+  tls:
+    - hosts:
+        - {{ tpl $ingress.host . }}
+  {{- end -}}
+{{- end -}}

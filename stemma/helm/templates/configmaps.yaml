@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "amundsen.fullname" . }}-{{ .Values.frontend.service.name }}
+  labels:
+    component: amundsen
+    {{- include "amundsen.labels" . | nindent 4 }}
+data:
+  {{ if .Values.frontend.config.class }}
+  FRONTEND_SVC_CONFIG_MODULE_CLASS: {{ .Values.frontend.config.class }}
+  {{ end }}
+  SEARCHSERVICE_BASE: {{ if .Values.search.ingress.enabled }}{{ .Values.search.ingress.host }}{{ else }}{{ .Values.search.baseURL }}{{ end }}
+  METADATASERVICE_BASE: {{ if .Values.metadata.ingress.enabled }}{{ .Values.metadata.ingress.host }}{{ else }}{{ .Values.metadata.baseURL }}{{ end }}
+  {{ if .Values.flaskApp.module }}
+  APP_WRAPPER: {{ .Values.flaskApp.module }}
+  {{ end }}
+  {{ if .Values.flaskApp.class }}
+  APP_WRAPPER_CLASS: {{ .Values.flaskApp.class }}
+  {{ end }}
+  {{ if .Values.oidc.enabled }}
+  OIDC_CLIENT_SECRETS: {{ .Values.oidc.secretsPath }}
+  OIDC_CALLBACK_ROUTE: /oidc_callback
+  OIDC_SCOPES: {{ .Values.oidc.scopes }}
+  {{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "amundsen.fullname" . }}-{{ .Values.metadata.service.name }}
+  labels:
+    app: {{ include "amundsen.name" . }}
+    component: {{ include "amundsen.fullname" . }}
+    chart: {{ include "amundsen.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  PROXY_HOST: {{ if .Values.metadata.proxy.host }}{{ .Values.metadata.proxy.host }}{{ else }}bolt://{{ .Release.Name }}-neo4j.{{ .Release.Namespace }}.svc.cluster.local{{ end }}
+  {{ if .Values.metadata.proxy.port }}
+  PROXY_PORT: {{ .Values.metadata.proxy.port }}
+  {{ end }}
+  {{ if .Values.metadata.proxy.user }}
+  CREDENTIALS_PROXY_USER: {{ .Values.metadata.proxy.user }}
+  {{ end }}
+  {{ if .Values.metadata.proxy.password }}
+  CREDENTIALS_PROXY_PASSWORD: {{ .Values.metadata.proxy.password }}
+  {{ end }}
+  {{ if .Values.flaskApp.module }}
+  FLASK_APP_MODULE_NAME: {{ .Values.flaskApp.module }}
+  {{ end }}
+  {{ if .Values.flaskApp.class }}
+  FLASK_APP_CLASS_NAME: {{ .Values.flaskApp.class }}
+  {{ end }}
+  {{ if .Values.oidc.enabled }}
+  OIDC_CLIENT_SECRETS: {{ .Values.oidc.secretsPath }}
+  OIDC_SCOPES: {{ .Values.oidc.scopes }}
+  {{ end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "amundsen.fullname" . }}-{{ .Values.search.service.name }}
+  labels:
+    app: {{ include "amundsen.name" . }}
+    component: {{ include "amundsen.fullname" . }}
+    chart: {{ include "amundsen.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  PROXY_ENDPOINT: {{ if .Values.search.proxy.endpoint }}{{ .Values.search.proxy.endpoint }}{{ else }}{{ .Release.Name }}-elasticsearch-client.{{ .Release.Namespace }}.svc.cluster.local{{ end }}
+  {{ if .Values.search.proxy.user }}
+  CREDENTIALS_PROXY_USER: {{ .Values.search.proxy.user }}
+  {{ end }}
+  {{ if .Values.search.proxy.password }}
+  CREDENTIALS_PROXY_PASSWORD: {{ .Values.search.proxy.password }}
+  {{ end }}
+
+  {{ if .Values.flaskApp.module }}
+  FLASK_APP_MODULE_NAME: {{ .Values.flaskApp.module }}
+  {{ end }}
+  {{ if .Values.flaskApp.class }}
+  FLASK_APP_CLASS_NAME: {{ .Values.flaskApp.class }}
+  {{ end }}
+  {{ if .Values.oidc.enabled }}
+  OIDC_CLIENT_SECRETS: {{ .Values.oidc.secretsPath }}
+  OIDC_SCOPES: {{ .Values.oidc.scopes }}
+  {{ end }}

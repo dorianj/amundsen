@@ -12,7 +12,6 @@ from flask_restful import Resource
 from metadata_service.exception import NotFoundException
 from metadata_service.proxy import get_proxy_client
 
-
 LOGGER = logging.getLogger(__name__)
 
 

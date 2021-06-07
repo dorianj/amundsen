@@ -1,0 +1,3 @@
+# Stemma Specific Requirements
+
+flaskoidc==0.2.3
