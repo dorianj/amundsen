@@ -29,7 +29,7 @@ WORKDIR /usr/local/amundsen/frontend/
 ENV PYTHONPATH=$PYTHONPATH:/usr/local/amundsen/frontend
 
 # Remove the amundsen-common from requirements
-RUN sed -E -i 's/amundsen-common==(.+)//' requirements.txt
+RUN sed -E -i 's/amundsen-common[>=]=(.+)//' requirements.txt
 
 # Install the local copy of amundsen frontend
 RUN pip install -e .

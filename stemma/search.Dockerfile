@@ -16,7 +16,7 @@ ADD ./../search /usr/local/amundsen/search
 WORKDIR /usr/local/amundsen/search/
 
 # Remove the amundsen-common from requirements
-RUN sed -E -i 's/amundsen-common==(.+)//' requirements.txt
+RUN sed -E -i 's/amundsen-common[>=]=(.+)//' requirements.txt
 
 # FixMe: Please remove once below packages are fixed in amundsen OSS.
 # (This is because we are using Python 3.8 in Stemma)
