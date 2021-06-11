@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "metadata/**"
+      - "requirements*txt"
 jobs:
   test-unit-python:
     runs-on: ubuntu-18.04
@@ -17,10 +18,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: sed -E -i 's/amundsen-common==(.+)//' requirements.txt && pip3 install ../common && pip3 install -r requirements.txt && pip3 install .[all] && pip3 install codecov && pip install -e '.[atlas,rds]'
+        run: sed -E -i 's/amundsen-common==(.+)//' ../requirements-common.txt && make install_deps && pip3 uninstall -y amundsen-common && pip3 install -e ../common
         working-directory: ./metadata
       - name: Run python unit tests
-        run: PYTHONPATH=../common make test
+        run: make test
         working-directory: ./metadata
       - name: Codecov
         uses: codecov/codecov-action@v1

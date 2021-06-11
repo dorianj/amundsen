@@ -7,6 +7,9 @@ example/docker/es_data*
 # Dev
 .idea/
 site/
+.tmp
+.env
+_delta_log/
 
 # Python
 *~
@@ -15,7 +18,7 @@ site/
 *.pyo
 *.pyt
 *.pytc
-*.egg-info
+*.egg*
 .*.swp
 venv/
 venv3/

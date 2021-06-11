@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - "frontend/**"
+      - "requirements*txt"
 jobs:
   test-unit-python:
     runs-on: ubuntu-18.04
@@ -17,7 +18,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
-        run: sed -E -i 's/amundsen-common==(.+)//' requirements.txt && pip3 install ../common && pip3 install -r requirements.txt && pip3 install .[all] && pip3 install codecov && pip install -r stemma_requirements.txt
+        run: sed -E -i 's/amundsen-common==(.+)//' ../requirements-common.txt && make install_deps && pip3 uninstall -y amundsen-common && pip3 install -e ../common && pip3 install -r stemma_requirements.txt
         working-directory: ./frontend
       - name: Run python unit tests
         run: make test

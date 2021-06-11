@@ -34,7 +34,7 @@ class VaultSecretManager(BaseSecretManager):
         vault_path = key or os.environ.get('VAULT_SECRET_PATH')
 
         if not vault_path:
-            raise SecretManagerException(f'Vault Secret Manager requires an explicit path or VAULT_SECRET_PATH set.')
+            raise SecretManagerException('Vault Secret Manager requires an explicit path or VAULT_SECRET_PATH set.')
 
         jwt_path = options['jwt_path'] if 'jwt_path' in options else os.environ['JWT_PATH']
         try:
