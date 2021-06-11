@@ -4,3 +4,5 @@ pytest>=4.6
 pytest-cov
 pytest-mock
 mock
+responses==0.12.1
+requests==2.25.0,<3.0

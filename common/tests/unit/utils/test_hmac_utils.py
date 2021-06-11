@@ -4,7 +4,7 @@ import unittest
 from amundsen_common.utils.hmac_utils import generate_token, verify_token, ENCODING
 
 
-class TestStemmaFixtures(unittest.TestCase):
+class TestHmacUtils(unittest.TestCase):
     SECRET = "!secret"
     payload = {"alpha": "beta"}
 
