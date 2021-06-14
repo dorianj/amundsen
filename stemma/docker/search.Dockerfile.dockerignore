@@ -1,0 +1,11 @@
+**
+../**
+!search/search_service
+!search/*requirements*.txt
+!search/setup.py
+!common/amundsen_common
+!common/README.md
+!common/*requirements*.txt
+!common/setup.py
+!*requirements*txt
+

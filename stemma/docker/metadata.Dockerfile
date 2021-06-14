@@ -12,11 +12,15 @@ ENV GUNICORN_BIND="0.0.0.0:5002" \
 
 ENV GUNICORN_CMD_ARGS="--bind=${GUNICORN_BIND} --timeout=${GUNICORN_TIMEOUT} --workers=${GUNICORN_WORKERS} --access-logfile - -"
 
-ADD ./../metadata /usr/local/amundsen/metadata
+ADD ./../../metadata /usr/local/amundsen/metadata
+# Add the common requirements
+ADD ./../../requirements-common.txt /usr/local/amundsen/metadata/requirements-common.txt
+ADD ./../../requirements-dev.txt /usr/local/amundsen/metadata/requirements-dev.txt
+
 WORKDIR /usr/local/amundsen/metadata/
 
 # Remove the amundsen-common from requirements
-RUN sed -E -i 's/amundsen-common[>=]=(.+)//' requirements.txt
+RUN sed -E -i 's/amundsen-common[>=]=(.+)//' requirements-common.txt
 
 # Install the local copy of amundsen frontend
 RUN pip install -e .
@@ -25,7 +29,9 @@ RUN pip install -e .
 RUN pip install -r stemma_requirements.txt
 
 # Install requirements with local common
-COPY ./../common /tmp/common
+COPY ./../../common /tmp/common
+COPY ./../../requirements-common.txt /tmp/common/requirements-common.txt
+COPY ./../../requirements-dev.txt /tmp/common/requirements-dev.txt
 RUN pip3 install /tmp/common && rm -r /tmp/common
 
 ENV FLASK_DEBUG 0

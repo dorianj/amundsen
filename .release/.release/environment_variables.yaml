@@ -1,0 +1,14 @@
+---
+mapping:
+  CREDENTIALS_ELASTICSEARCH_PROXY_HOST: "${RELEASE_APP_NAME}-elasticsearch-client"
+  CREDENTIALS_NEO4J_PROXY_HOST: "${RELEASE_APP_NAME}-neo4j"
+defaults:
+- key: NEO4J_PASSWORD
+  value: test
+  secret: true
+- key: ES_PASSWORD
+  value: test
+  secret: true
+- key: CUSTOMER_NAME
+  value: preview
+services: {}

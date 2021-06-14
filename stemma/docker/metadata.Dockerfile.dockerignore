@@ -1,0 +1,11 @@
+**
+../**
+!metadata/metadata_service
+!metadata/*requirements*.txt
+!metadata/setup.py
+!common/amundsen_common
+!common/README.md
+!common/*requirements*.txt
+!common/setup.py
+!*requirements*txt
+

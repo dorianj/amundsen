@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "amundsen.fullname" . }}
+  labels:
+    run: amundsen
+    component: amundsen
+    {{- include "amundsen.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: {{ .Values.frontend.port.name }}
+      port: {{ .Values.frontend.port.value }}
+      targetPort: {{ .Values.frontend.port.value }}
+      protocol: TCP
+    - name: {{ .Values.search.port.name }}
+      port: {{ .Values.search.port.value }}
+      targetPort: {{ .Values.search.port.value }}
+      protocol: TCP
+    - name: {{ .Values.metadata.port.name }}
+      port: {{ .Values.metadata.port.value }}
+      targetPort: {{ .Values.metadata.port.value }}
+      protocol: TCP
+  selector:
+    component: amundsen
+    {{- include "amundsen.selectorLabels" . | nindent 4 }}

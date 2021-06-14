@@ -1,0 +1,67 @@
+---
+app: amundsen
+auto_deploy: true
+context: stemma-release-us-east-1
+domain: amundsen.release.stemmadev.com
+mode: development
+repo_name: stemma-ai/amundsen
+tracking_branch: main
+environment_templates:
+- name: ephemeral
+  datasets:
+  - name: artists
+- name: permanent
+resources:
+  cpu:
+    limits: 1000m
+    requests: 100m
+  memory:
+    limits: 1Gi
+    requests: 100Mi
+  replicas: 1
+hostnames:
+- frontend: frontend-${env_id}-${domain}
+services:
+- name: databuilder
+  image: stemma-ai/amundsen/databuilder
+  has_repo: true
+charts:
+- name: amundsen
+  directory: stemma/helm/amundsen
+  values: release-values.yaml
+  env_file: "/stemma/deploy_configs/dist/${customer_name}.env"
+- name: ingress
+  directory: stemma/helm/release-ingress
+  values: values.yaml
+jobs:
+- name: databuilder
+  from_services: databuilder
+  command:
+  - "./run-databuilder.sh"
+builds:
+- name: frontend
+  dockerfile: stemma/docker/frontend.Dockerfile
+- name: metadata
+  dockerfile: stemma/docker/metadata.Dockerfile
+- name: search
+  dockerfile: stemma/docker/search.Dockerfile
+- name: databuilder
+  dockerfile: stemma/docker/databuilder.Dockerfile
+- name: sql-parser
+  repo_url: https://github.com/stemma-ai/sql-parsing.git
+  repo_branch: maven-docker-build
+workflows:
+- name: setup
+  parallelize:
+  - step: amundsen
+    tasks:
+    - charts.amundsen
+    - charts.ingress
+  - step: databuilder
+    tasks:
+    - jobs.databuilder
+- name: patch
+  parallelize:
+  - step: amundsen
+    tasks:
+    - charts.amundsen

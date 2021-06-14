@@ -12,11 +12,14 @@ ENV GUNICORN_BIND="0.0.0.0:5001" \
 
 ENV GUNICORN_CMD_ARGS="--bind=${GUNICORN_BIND} --timeout=${GUNICORN_TIMEOUT} --workers=${GUNICORN_WORKERS} --access-logfile - -"
 
-ADD ./../search /usr/local/amundsen/search
+ADD ./../../search /usr/local/amundsen/search
+# Add the common requirements
+ADD ./../../requirements-common.txt /usr/local/amundsen/search/requirements-common.txt
+ADD ./../../requirements-dev.txt /usr/local/amundsen/search/requirements-dev.txt
 WORKDIR /usr/local/amundsen/search/
 
 # Remove the amundsen-common from requirements
-RUN sed -E -i 's/amundsen-common[>=]=(.+)//' requirements.txt
+RUN sed -E -i 's/amundsen-common[>=]=(.+)//' requirements-common.txt
 
 # FixMe: Please remove once below packages are fixed in amundsen OSS.
 # (This is because we are using Python 3.8 in Stemma)
@@ -30,7 +33,9 @@ RUN pip install -e .
 RUN pip install -r stemma_requirements.txt
 
 # Install requirements with local common
-COPY ./../common /tmp/common
+COPY ./../../common /tmp/common
+COPY ./../../requirements-common.txt /tmp/common/requirements-common.txt
+COPY ./../../requirements-dev.txt /tmp/common/requirements-dev.txt
 RUN pip3 install /tmp/common && rm -r /tmp/common
 
 ENV FLASK_DEBUG 0

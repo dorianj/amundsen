@@ -1,0 +1,7 @@
+**
+../**
+!databuilder/databuilder
+!databuilder/*requirements*.txt
+!databuilder/setup.py
+!stemma/scripts/run-databuilder.sh
+!requirements*txt

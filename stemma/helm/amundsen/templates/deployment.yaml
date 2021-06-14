@@ -1,0 +1,182 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "amundsen.fullname" . }}
+  labels:
+    component: amundsen
+    {{- include "amundsen.labels" . | nindent 4 }}
+spec:
+  replicas: {{ default 1 .Values.replicaCount }}
+  selector:
+    matchLabels:
+      component: amundsen
+      {{- include "amundsen.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        component: amundsen
+        {{- include "amundsen.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: {{ .Values.restartPolicy }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      containers:
+      - name: {{ .Values.frontend.service.name }}
+        image: {{ .Values.image.repository }}/{{ .Values.frontend.image.name }}:{{ .Values.frontend.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: {{ .Values.frontend.port.name }}
+            containerPort: {{ .Values.frontend.port.value }}
+            protocol: TCP
+        envFrom:
+          - configMapRef:
+              name: {{ template "amundsen.fullname" . }}-{{ .Values.frontend.service.name }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.frontend.healthcheckURL }}
+            port: {{ .Values.frontend.port.value }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 5
+
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.frontend.healthcheckURL }}
+            port: {{ .Values.frontend.port.value }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+
+        volumeMounts:
+        {{- if .Values.oidc.enabled }}
+          - name: oidc-config-{{ .Values.frontend.service.name }}
+            mountPath: {{ .Values.oidc.secretsPath }}
+            subPath: client_secrets.json
+        {{- end }}
+        {{- with .Values.frontend.resources }}
+        resources:
+          {{ toYaml . | indent 10 }}
+        {{- end }}
+
+      - name: {{ .Values.metadata.service.name }}
+        image: {{ .Values.image.repository }}/{{ .Values.metadata.image.name }}:{{ .Values.metadata.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: {{ .Values.metadata.port.name }}
+            containerPort: {{ .Values.metadata.port.value }}
+            protocol: TCP
+        envFrom:
+          - configMapRef:
+              name: {{ template "amundsen.fullname" . }}-{{ .Values.metadata.service.name }}
+
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.metadata.healthcheckURL }}
+            port: {{ .Values.metadata.port.value }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 5
+
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.metadata.healthcheckURL }}
+            port: {{ .Values.metadata.port.value }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+
+        volumeMounts:
+        {{- if .Values.oidc.enabled }}
+          - name: oidc-config-{{ .Values.metadata.service.name }}
+            mountPath: {{ .Values.oidc.secretsPath }}
+            subPath: client_secrets.json
+        {{- end }}
+        {{- with .Values.metadata.resources }}
+        resources:
+          {{ toYaml . | indent 10 }}
+        {{- end }}
+
+      - name: {{ .Values.search.service.name }}
+        image: {{ .Values.image.repository }}/{{ .Values.search.image.name }}:{{ .Values.search.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: {{ .Values.search.port.name }}
+            containerPort: {{ .Values.search.port.value }}
+            protocol: TCP
+        envFrom:
+          - configMapRef:
+              name: {{ template "amundsen.fullname" . }}-{{ .Values.search.service.name }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.search.healthcheckURL }}
+            port: {{ .Values.search.port.value }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 5
+
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.search.healthcheckURL }}
+            port: {{ .Values.search.port.value }}
+          initialDelaySeconds: 10
+          periodSeconds: 60
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 5
+
+        volumeMounts:
+        {{- if .Values.oidc.enabled }}
+          - name: oidc-config-{{ .Values.search.service.name }}
+            mountPath: {{ .Values.oidc.secretsPath }}
+            subPath: client_secrets.json
+        {{- end }}
+        {{- with .Values.search.resources }}
+        resources:
+          {{ toYaml . | indent 10 }}
+        {{- end }}
+
+
+      volumes:
+      {{- if .Values.oidc.enabled }}
+        - name: oidc-config-{{ .Values.frontend.service.name }}
+          secret:
+            secretName: oidc-config-{{ .Values.frontend.service.name }}
+        - name: oidc-config-{{ .Values.metadata.service.name }}
+          secret:
+            secretName: oidc-config-{{ .Values.metadata.service.name }}
+        - name: oidc-config-{{ .Values.search.service.name }}
+          secret:
+            secretName: oidc-config-{{ .Values.search.service.name }}
+      {{- end }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

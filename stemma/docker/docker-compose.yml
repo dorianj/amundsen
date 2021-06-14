@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./frontend.Dockerfile
+    ports:
+      - 5000:5000
+  metadata:
+    build:
+      context: .
+      dockerfile: ./metadata.Dockerfile
+  search:
+    build:
+      context: .
+      dockerfile: ./search.Dockerfile
+  databuilder:
+    build:
+      context: .
+      dockerfile: ./databuilder.Dockerfile

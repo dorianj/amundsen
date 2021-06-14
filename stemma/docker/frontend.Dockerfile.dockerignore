@@ -1,0 +1,11 @@
+**
+../../**
+!frontend/amundsen_application
+!frontend/README.md
+!frontend/*requirements*.txt
+!frontend/setup.py
+!common/amundsen_common
+!common/README.md
+!common/*requirements*.txt
+!common/setup.py
+!*requirements*txt
