@@ -33,6 +33,13 @@ charts:
 - name: ingress
   directory: stemma/helm/release-ingress
   values: values.yaml
+- name: argo-wf
+  repo_url: https://argoproj.github.io/argo-helm
+  add: argo
+  install: argo/argo-workflows
+  directory: stemma/helm/argo
+  values: values.yaml
+
 jobs:
 - name: databuilder
   from_services: databuilder
@@ -53,6 +60,9 @@ builds:
 workflows:
 - name: setup
   parallelize:
+  - step: argo-wf
+    tasks:
+    - charts.argo-wf
   - step: amundsen
     tasks:
     - charts.amundsen
