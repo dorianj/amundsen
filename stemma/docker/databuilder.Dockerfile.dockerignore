@@ -1,7 +1,11 @@
 **
 ../**
+!common/amundsen_common
+!common/README.md
+!common/*requirements*.txt
+!common/setup.py
 !databuilder/databuilder
+!databuilder/install_requirements
 !databuilder/*requirements*.txt
 !databuilder/setup.py
-!stemma/scripts/run-databuilder.sh
 !requirements*txt

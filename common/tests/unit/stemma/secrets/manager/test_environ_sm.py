@@ -29,9 +29,3 @@ class TestEnvironSecretManager(unittest.TestCase):
         with self.env:
             with self.assertRaisesRegex(SecretManagerException, 'requires an encoded'):
                 EnvironSecretManager('empty_env_key')
-
-            with self.assertRaisesRegex(SecretManagerException, 'serialization'):
-                EnvironSecretManager('invalid_env_key')
-
-            with self.assertRaisesRegex(SecretManagerException, 'serialization'):
-                EnvironSecretManager('no_such_env_key')

@@ -4,6 +4,7 @@ import os
 from typing import Any, Dict, Optional
 
 from amundsen_common.stemma.secrets.manager.base import BaseSecretManager, SecretManagerException
+from amundsen_common.stemma.tests.secrets.local_secrets import local_secrets
 
 
 LOGGER = logging.getLogger(__name__)
@@ -31,8 +32,8 @@ class EnvironSecretManager(BaseSecretManager):
         try:
             loaded_secrets = json.loads(serialized_secrets)
         except Exception as e:
-            LOGGER.error(f'Exception on json parsing {e}')
-            raise SecretManagerException(f'Environ json serialization failed for key: {key}')
+            LOGGER.error(f'Exception on json parsing {e}, passing along all environment varaibles as secrets.')
+            loaded_secrets = local_secrets
 
         if type(loaded_secrets) != dict:
             LOGGER.error(f'Unexpected value type in secrets {type(loaded_secrets)}')
