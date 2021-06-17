@@ -1,0 +1,36 @@
+
+replicaCount: 1
+podAnnotations: {}
+restartPolicy: Always
+podSecurityContext: {}
+nodeSelector: {}
+affinity: {}
+tolerations: []
+
+common:
+  customerName: stemma
+  serviceAccountName: vault
+  secretEnvironVar: VAULT_SECRET_PATH  # Can be changed if not using Vault
+  secretEnvironRoleKey: VAULT_ACCESS_ROLE
+  secretEnvironRoleValue: stemmaread
+  vaultHostPort: "http://vault:8200"
+  vaultJwtTokenLocation: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  secretManagerClass: 'amundsen_common.stemma.secrets.manager.vault.VaultSecretManager'
+  amundsenDataScretLocation: "secret/data/stemma/amundsen"
+  defaultTimezone: America/New_York
+  image:
+    repo: stemma-databuilder
+    tag: latest
+    imagePullPolicy: "Never"
+  concurrencyPolicy: "Replace"
+  successfulJobsHistoryLimit: 10
+  failedJobsHistoryLimit: 10
+
+rdbWorkflows:
+  workflowPrefix: "rdb-wf"
+  suspend: false
+  workflows:
+
+indexSearchWorkflows:
+  suspend: false
+  schedule: "*/1 * * * *"

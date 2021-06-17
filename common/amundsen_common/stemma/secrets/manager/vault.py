@@ -16,7 +16,7 @@ class VaultSecretManager(BaseSecretManager):
     Secret manager to integrate with Hashicorp's Vault.
     """
 
-    DEFAULT_ACCESS_ROLE = 'stemma'
+    DEFAULT_ACCESS_ROLE = 'stemmaread'
     DEFAULT_AUTH_PATH = 'auth/kubernetes/login'
     DEFAULT_HOST_PORT = 'http://vault:8200'
 
@@ -66,7 +66,7 @@ class VaultSecretManager(BaseSecretManager):
         LOGGER.info(f'Received secrets response: {secret_resp.status_code}')
 
         secret_resp_json = secret_resp.json()
-        if resp.status_code != HTTPStatus.OK or 'data' not in secret_resp_json:
+        if 'data' not in secret_resp_json:
             raise SecretManagerException(f'Error retrieving secrets: for: {secret_loc_url}, Error: {secret_resp_json}')
 
         return secret_resp_json['data']['data']

@@ -51,6 +51,14 @@ class SearchIndexTaskGenerator(TaskGenerator):
         ])
         super().__init__()
 
+    def try_load_conn_secrets(self) -> None:
+        """
+        This should be the only class that does not require separate connection secrets
+        since Neo4j and Elasticsearch are the only two connections. The login credentials
+        for these connections should be top-level objects.
+        """
+        pass
+
     def _generate_base_confs(self) -> None:
         job_config_dict = {
             'extractor.search_data.extractor.neo4j.graph_url': self.NEO4J_ENDPOINT,

@@ -1,0 +1,34 @@
+common:
+  customerName: preview
+rdbWorkflows:
+  workflows:
+  - database: '"ca_covid"'
+    schedule: '*/1 * * * *'
+    secretLocation: secret/data/stemma/snowflake
+    tasks:
+      metadata: true
+      stats: true
+    type: snowflake
+  - database: SNOWFLAKE_SAMPLE_DATA
+    schedule: '*/1 * * * *'
+    secretLocation: secret/data/stemma/snowflake
+    tasks:
+      metadata: true
+      stats: true
+    type: snowflake
+  - database: '"ca_covid"'
+    schedule: 59 23 1,7,14,21 * *
+    secretLocation: secret/data/stemma/snowflake
+    tasks:
+      metadata: true
+      stats: true
+    timezone: America/New_York
+    type: snowflake
+  - database: SNOWFLAKE_SAMPLE_DATA
+    schedule: 59 23 1,7,14,21 * *
+    secretLocation: secret/data/stemma/snowflake
+    tasks:
+      metadata: true
+      stats: true
+    timezone: America/New_York
+    type: snowflake

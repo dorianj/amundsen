@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: secret-envvars
+data:
+    VAULT_HOST_PORT: {{ $.Values.common.vaultHostPort }}
+    JWT_PATH: {{ $.Values.common.vaultJwtTokenLocation }}
+    SECRET_MANAGER_CLASS: {{ $.Values.common.secretManagerClass | quote }}
+    {{ $.Values.common.secretEnvironRoleKey }}: {{ $.Values.common.secretEnvironRoleValue }}
+---

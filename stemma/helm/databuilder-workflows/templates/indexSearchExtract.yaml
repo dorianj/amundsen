@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name:  {{ $.Values.common.customerName }}-extract-index-search
+spec:
+  schedule: {{ $.Values.indexSearchWorkflows.schedule | quote }}
+  suspend: {{ $.Values.indexSearchWorkflows.suspend | default false }}
+  concurrencyPolicy: {{ $.Values.common.concurrencyPolicy }}
+  successfulJobsHistoryLimit: {{ $.Values.common.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $.Values.common.failedJobsHistoryLimit }}
+  workflowSpec:
+    serviceAccountName:  {{ $.Values.common.serviceAccountName }}
+    entrypoint: main
+    templates:
+      - name: main
+        dag:
+          tasks:
+            - name: extract-index-search
+              template: stemma-databuilder
+      - name: stemma-databuilder
+        container:
+          image: {{ $.Values.common.image.repo | quote }}
+          imagePullPolicy: {{ $.Values.common.image.imagePullPolicy | quote }}
+          command: ["python3", "databuilder/stemma/tasks/run_databuilder.py", "extract-index-search"]
+          env:
+            - name: VAULT_HOST_PORT
+              value: {{ $.Values.common.vaultHostPort }}
+            - name: JWT_PATH
+              value: {{ $.Values.common.vaultJwtTokenLocation }}
+            - name: SECRET_MANAGER_CLASS
+              value: {{ $.Values.common.secretManagerClass | quote }}
+            - name: STEMMA_DATABASE_SECRETS
+              value: {{ $.Values.common.amundsenDataScretLocation }}
+            - name: {{ $.Values.common.secretEnvironRoleKey }}
+              value: {{ $.Values.common.secretEnvironRoleValue }}
+          # TODO: Should be able to get most envvars from configmap but not working atm
+          # envFrom:
+          #   - configMapRef:
+          #       name: secret-envvars

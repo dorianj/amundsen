@@ -7,6 +7,7 @@ PreviewConf = BaseAppConf(
 )
 
 
+PREVIEW_STEMMA_DATABASES_SECRETS = 'secret/data/stemma/amundsen'
 PREVIEW_VAULT_SECRETS = 'secret/data/stemma/snowflake'
 
 DatabuilderWorkflows = BaseDatabuilderWorkflow(

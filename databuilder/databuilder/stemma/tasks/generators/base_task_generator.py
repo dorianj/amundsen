@@ -18,8 +18,8 @@ from databuilder.task.task import DefaultTask
 LOGGER = logging.getLogger(__name__)
 
 STEMMA_ENV_PREFIX = 'STEMMA_'
-DEFAULT_STEMMA_NEO4J_SECRET_LOC = 'secret/stemma/neo4j'
-STEMMA_NEO4J_SECRET_LOC = os.environ.get('STEMMA_NEO4J_SECRET_LOC', DEFAULT_STEMMA_NEO4J_SECRET_LOC)
+DEFAULT_STEMMA_NEO4J_SECRET_LOC = 'secret/stemma/amundsen'
+STEMMA_NEO4J_SECRET_LOC = os.environ.get('STEMMA_DATABASE_SECRETS', DEFAULT_STEMMA_NEO4J_SECRET_LOC)
 
 
 class InvalidSecretsException(Exception):
@@ -47,13 +47,13 @@ class TaskGenerator(object):
         self.config_inputs = config_inputs
 
         # Data source connection secrets
-        self.secrets_manager = get_secrets_manager()
-        self.conn_secrets = self.secrets_manager.secrets['CONNECTION']
+        self.conn_secrets: Dict[str, Any] = {}
+        self.try_load_conn_secrets()
 
         # Neo4j Secrets
         self.neo4j_secret_manager = get_secrets_manager(STEMMA_NEO4J_SECRET_LOC)
-        self.neo4j_user = self.neo4j_secret_manager.secrets['NEO4J_USERNAME']
-        self.neo4j_password = self.neo4j_secret_manager.secrets['NEO4J_PASSWORD']
+        self.neo4j_user = self.neo4j_secret_manager.secrets.get('NEO4J_USERNAME')
+        self.neo4j_password = self.neo4j_secret_manager.secrets.get('NEO4J_PASSWORD')
 
         # Create extractor object
         self.extractor_class = self.EXTRACTOR_CLASS
@@ -66,6 +66,13 @@ class TaskGenerator(object):
         self.conf_dict: Dict[str, Any] = {}
         self._generate_base_confs()
         self.add_instance_confs()
+
+    def try_load_conn_secrets(self) -> None:
+        """
+        Allows overriding of connection secrets by subclasses.
+        """
+        self.secrets_manager = get_secrets_manager()
+        self.conn_secrets = self.secrets_manager.secrets.get('CONNECTION', {})
 
     def _generate_base_confs(self) -> None:
         job_config_dict = {
