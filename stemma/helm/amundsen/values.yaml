@@ -70,8 +70,8 @@ frontend:
   envVars:
     # Everything set under "envVars" during helm install/upgrade will be parsed as environment variable for this service.
     # No need to explicitly add the variables in values file or in configmap.
-    FLASK_OIDC_CLIENT_ID:
-    FLASK_OIDC_CLIENT_SECRET:
+    FLASK_OIDC_CLIENT_ID: ""
+    FLASK_OIDC_CLIENT_SECRET: ""
 
 search:
   service:
@@ -97,8 +97,8 @@ search:
   envVars:
     # Everything set under "envVars" during helm install/upgrade will be parsed as environment variable for this service.
     # No need to explicitly add the variables in values file or in configmap.
-    FLASK_OIDC_CLIENT_ID:
-    FLASK_OIDC_CLIENT_SECRET:
+    FLASK_OIDC_CLIENT_ID: ""
+    FLASK_OIDC_CLIENT_SECRET: ""
 
 metadata:
   service:
@@ -125,8 +125,8 @@ metadata:
   envVars:
     # Everything set under "envVars" during helm install/upgrade will be parsed as environment variable for this service.
     # No need to explicitly add the variables in values file or in configmap.
-    FLASK_OIDC_CLIENT_ID:
-    FLASK_OIDC_CLIENT_SECRET:
+    FLASK_OIDC_CLIENT_ID: ""
+    FLASK_OIDC_CLIENT_SECRET: ""
 
 
 neo4j:
