@@ -1,9 +1,12 @@
 import os
+import json
+
 from typing import Dict
+from flask import Flask, session
 
 from amundsen_application.config import LocalConfig
 from amundsen_application.stemma import init_stemma_routes
-from flask import Flask
+from amundsen_application.models.user import load_user, User
 
 
 def get_access_headers(app: Flask) -> Dict:
@@ -15,17 +18,15 @@ def get_access_headers(app: Flask) -> Dict:
     as Authorization header.
     """
     try:
-        access_token = app.oidc.get_access_token()
+        # noinspection PyUnresolvedReferences
+        access_token = json.dumps(app.auth_client.token)
         return {'Authorization': 'Bearer {}'.format(access_token)}
     except Exception:
         return {}
 
 
-def get_auth_user(app: Flask) -> object:
-    from flask import g
-
-    user_info = type('UserInfo', (object,), g.oidc_id_token)
-    user_info.user_id = user_info.email     # type: ignore
+def get_auth_user(app: Flask) -> User:
+    user_info = load_user(session.get("user"))
     return user_info
 
 

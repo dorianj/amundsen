@@ -31,23 +31,20 @@ flaskApp:
   class: ""   # 'FlaskOIDC' if you want to enable OIDC
 
 oidc:
-#  If enabled, please make sure to fill in the fields under provider key below.
+  # To enable OIDC, please make sure to fill in the mandatory variables under 'envVars' for each service.
+  # Everything under oidc.configs will be parsed as environment variables for each service.
+  # Following variables must be set under `envVars` for each service.
+  # - FLASK_OIDC_CLIENT_ID
+  # - FLASK_OIDC_CLIENT_SECRET
+  # More Information: https://github.com/verdan/flaskoidc#configurations
   enabled: false
-  secretsPath: "/etc/client_secrets.json"
-  scopes: "openid,email,profile"
-  provider:
-    issuer:
-    auth_uri:
-    userinfo_uri:
-    token_uri:
-    token_introspection_uri:
-#  Google OIDC Details
-#  provider:
-#    issuer: https://accounts.google.com
-#    auth_uri: https://accounts.google.com/o/oauth2/v2/auth
-#    userinfo_uri: https://openidconnect.googleapis.com/v1/userinfo
-#    token_uri: https://oauth2.googleapis.com/token
-#    token_introspection_uri: https://oauth2.googleapis.com/tokeninfo
+  configs:
+    FLASK_OIDC_PROVIDER_NAME: google
+    FLASK_OIDC_SCOPES: "openid email profile"
+    FLASK_OIDC_USER_ID_FIELD: email
+    FLASK_OIDC_REDIRECT_URI: "/auth"
+    FLASK_OIDC_CONFIG_URL: "https://accounts.google.com/.well-known/openid-configuration"
+    FLASK_OIDC_WHITELISTED_ENDPOINTS: "status,healthcheck,health,stemma/slack/events,api/stemma/slack/v1/slash/help"
 
 
 frontend:
@@ -68,12 +65,13 @@ frontend:
     tlsEnabled: false
     labels: {}
     annotations: {kubernetes.io/ingress.class: alb, alb.ingress.kubernetes.io/scheme: internet-facing, alb.ingress.kubernetes.io/target-type: instance}
-  oidc:
-    client:
-      id: ""
-      secret: ""
   resources: {}
   healthcheckURL: "/healthcheck"
+  envVars:
+    # Everything set under "envVars" during helm install/upgrade will be parsed as environment variable for this service.
+    # No need to explicitly add the variables in values file or in configmap.
+    FLASK_OIDC_CLIENT_ID:
+    FLASK_OIDC_CLIENT_SECRET:
 
 search:
   service:
@@ -90,16 +88,17 @@ search:
     host: ""
     tlsEnabled: false
     labels: {}
-  oidc:
-    client:
-      id: ""
-      secret: ""
   proxy:
     endpoint:
     user:
     password:
   resources: {}
   healthcheckURL: "/healthcheck"
+  envVars:
+    # Everything set under "envVars" during helm install/upgrade will be parsed as environment variable for this service.
+    # No need to explicitly add the variables in values file or in configmap.
+    FLASK_OIDC_CLIENT_ID:
+    FLASK_OIDC_CLIENT_SECRET:
 
 metadata:
   service:
@@ -116,10 +115,6 @@ metadata:
     host: ""
     tlsEnabled: false
     labels: {}
-  oidc:
-    client:
-      id: ""
-      secret: ""
   proxy:
     host:
     port:
@@ -127,6 +122,11 @@ metadata:
     password:
   resources: {}
   healthcheckURL: "/healthcheck"
+  envVars:
+    # Everything set under "envVars" during helm install/upgrade will be parsed as environment variable for this service.
+    # No need to explicitly add the variables in values file or in configmap.
+    FLASK_OIDC_CLIENT_ID:
+    FLASK_OIDC_CLIENT_SECRET:
 
 
 neo4j:

@@ -17,12 +17,12 @@ data:
   {{ if .Values.flaskApp.class }}
   APP_WRAPPER_CLASS: {{ .Values.flaskApp.class }}
   {{ end }}
-  {{ if .Values.oidc.enabled }}
-  OIDC_CLIENT_SECRETS: {{ .Values.oidc.secretsPath }}
-  OIDC_CALLBACK_ROUTE: /oidc_callback
-  OIDC_SCOPES: {{ .Values.oidc.scopes }}
-  # TEST_USER_EMAIL: {{ .Values.frontend.username }}
-  {{ end }}
+{{ if .Values.oidc.enabled }}
+{{ toYaml .Values.oidc.configs | indent 2 }}
+{{ end }}
+{{ if .Values.frontend.envVars }}
+{{ toYaml .Values.frontend.envVars | indent 2 }}
+{{ end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -51,10 +51,12 @@ data:
   {{ if .Values.flaskApp.class }}
   FLASK_APP_CLASS_NAME: {{ .Values.flaskApp.class }}
   {{ end }}
-  {{ if .Values.oidc.enabled }}
-  OIDC_CLIENT_SECRETS: {{ .Values.oidc.secretsPath }}
-  OIDC_SCOPES: {{ .Values.oidc.scopes }}
-  {{ end }}
+{{ if .Values.oidc.enabled }}
+{{ toYaml .Values.oidc.configs | indent 2 }}
+{{ end }}
+{{ if .Values.metadata.envVars }}
+{{ toYaml .Values.metadata.envVars | indent 2 }}
+{{ end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -81,7 +83,9 @@ data:
   {{ if .Values.flaskApp.class }}
   FLASK_APP_CLASS_NAME: {{ .Values.flaskApp.class }}
   {{ end }}
-  {{ if .Values.oidc.enabled }}
-  OIDC_CLIENT_SECRETS: {{ .Values.oidc.secretsPath }}
-  OIDC_SCOPES: {{ .Values.oidc.scopes }}
-  {{ end }}
+{{ if .Values.oidc.enabled }}
+{{ toYaml .Values.oidc.configs | indent 2 }}
+{{ end }}
+{{ if .Values.search.envVars }}
+{{ toYaml .Values.search.envVars | indent 2 }}
+{{ end }}

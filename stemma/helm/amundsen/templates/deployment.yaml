@@ -60,12 +60,6 @@ spec:
           successThreshold: 1
           failureThreshold: 5
 
-        volumeMounts:
-        {{- if .Values.oidc.enabled }}
-          - name: oidc-config-{{ .Values.frontend.service.name }}
-            mountPath: {{ .Values.oidc.secretsPath }}
-            subPath: client_secrets.json
-        {{- end }}
         {{- with .Values.frontend.resources }}
         resources:
           {{ toYaml . | indent 10 }}
@@ -102,12 +96,6 @@ spec:
           successThreshold: 1
           failureThreshold: 5
 
-        volumeMounts:
-        {{- if .Values.oidc.enabled }}
-          - name: oidc-config-{{ .Values.metadata.service.name }}
-            mountPath: {{ .Values.oidc.secretsPath }}
-            subPath: client_secrets.json
-        {{- end }}
         {{- with .Values.metadata.resources }}
         resources:
           {{ toYaml . | indent 10 }}
@@ -143,30 +131,10 @@ spec:
           successThreshold: 1
           failureThreshold: 5
 
-        volumeMounts:
-        {{- if .Values.oidc.enabled }}
-          - name: oidc-config-{{ .Values.search.service.name }}
-            mountPath: {{ .Values.oidc.secretsPath }}
-            subPath: client_secrets.json
-        {{- end }}
         {{- with .Values.search.resources }}
         resources:
           {{ toYaml . | indent 10 }}
         {{- end }}
-
-
-      volumes:
-      {{- if .Values.oidc.enabled }}
-        - name: oidc-config-{{ .Values.frontend.service.name }}
-          secret:
-            secretName: oidc-config-{{ .Values.frontend.service.name }}
-        - name: oidc-config-{{ .Values.metadata.service.name }}
-          secret:
-            secretName: oidc-config-{{ .Values.metadata.service.name }}
-        - name: oidc-config-{{ .Values.search.service.name }}
-          secret:
-            secretName: oidc-config-{{ .Values.search.service.name }}
-      {{- end }}
 
       {{- with .Values.nodeSelector }}
       nodeSelector:

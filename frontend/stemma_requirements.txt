@@ -1,10 +1,11 @@
 # Stemma Specific Requirements
 
-flaskoidc==0.2.3
-
 # Slack Integrations
 slack_sdk==3.5.1
 slackeventsapi==2.2.1
 
 # To Cache the Responses
 beaker>=1.11.0
+
+# FlaskOIDC
+flaskoidc==1.0.0

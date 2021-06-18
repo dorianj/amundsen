@@ -1,3 +1,4 @@
 # Stemma Specific Requirements
 
-flaskoidc==0.2.3
+# FlaskOIDC
+flaskoidc==1.0.0
